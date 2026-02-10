@@ -1,160 +1,523 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2299.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 16.0px Arial; color: #d9dbe7; -webkit-text-stroke: #d9dbe7; background-color: #131313}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 16.0px Arial; color: #d9dbe7; -webkit-text-stroke: #d9dbe7; background-color: #131313; min-height: 18.0px}
-    span.s1 {font-kerning: none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>龍血映沙 | Travel Quick Guide</title>
+    <style>
+        :root {
+            /* 日式極簡配色 / 中東沙漠色調 */
+            --bg-color: #FAFAFA;
+            --card-bg: #FFFFFF;
+            --text-main: #333333;
+            --text-sub: #888888;
+            --accent-sand: #D4A373; /* 沙漠金 */
+            --accent-ocean: #6B9080; /* 索科特拉海藍 */
+            --accent-alert: #E76F51;
+            --border-radius: 16px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.05);
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            font-family: var(--font-family);
+            color: var(--text-main);
+            padding-bottom: 80px; /* Space for bottom nav */
+        }
+
+        /* Header */
+        header {
+            background: var(--card-bg);
+            padding: 20px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
+        .subtitle { font-size: 12px; color: var(--text-sub); display: block; margin-top: 4px; }
+
+        /* Navigation Tabs */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            text-align: center;
+            font-size: 10px;
+            color: #ccc;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .nav-item.active { color: var(--text-main); font-weight: 600; }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+
+        /* Content Sections */
+        .section { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
+        .section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Timeline Cards */
+        .day-header {
+            margin: 30px 0 15px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-sub);
+            letter-spacing: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .weather-badge {
+            font-size: 12px;
+            background: #F0F4F8;
+            padding: 4px 10px;
+            border-radius: 20px;
+            color: var(--text-sub);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            position: relative;
+            border-left: 4px solid transparent;
+            transition: transform 0.2s;
+        }
+
+        .card:active { transform: scale(0.98); }
+
+        /* Card Types */
+        .card.transport { border-left-color: #A5A58D; }
+        .card.activity { border-left-color: var(--accent-sand); }
+        .card.stay { border-left-color: var(--text-main); }
+        .card.food { border-left-color: var(--accent-alert); }
+
+        .card-time { font-size: 12px; color: var(--text-sub); font-weight: 600; margin-bottom: 4px; }
+        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .card-desc { font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 12px; }
+
+        /* Tags & Highlights */
+        .tag {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 6px;
+            font-weight: 600;
+        }
+        .tag.guide { background: #FFF3E0; color: #E67E22; }
+        .tag.must-buy { background: #E8F5E9; color: #2E7D32; }
+
+        /* Action Buttons */
+        .actions { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-map {
+            background: #F5F5F5;
+            color: var(--text-main);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        /* Flights Table */
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; color: var(--text-sub); padding: 8px 0; font-weight: 500; font-size: 11px; }
+        td { padding: 12px 0; border-bottom: 1px solid #eee; }
+        .flight-row { display: grid; grid-template-columns: 0.8fr 1.5fr 1fr; gap: 10px; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+
+        /* Budget Section */
+        .budget-box {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+        .budget-total { font-size: 32px; font-weight: 700; color: var(--text-main); margin: 10px 0; }
+        .input-group { display: flex; gap: 10px; margin-top: 10px; }
+        input { flex: 1; padding: 10px; border: 1px solid #eee; border-radius: 8px; background: #FAFAFA; }
+        button.add-btn { background: var(--text-main); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; }
+        .expense-list { list-style: none; padding: 0; margin-top: 20px; }
+        .expense-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+
+        /* Checklist */
+        .checklist-category { margin-top: 20px; }
+        .category-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--accent-ocean); }
+        .check-item {
+            background: var(--card-bg);
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+        .check-item.checked { opacity: 0.5; text-decoration: line-through; background: transparent; }
+        .checkbox-circle {
+            width: 20px; height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .checked .checkbox-circle { background: var(--accent-ocean); border-color: var(--accent-ocean); }
+        .checked .checkbox-circle::after { content: '✓'; color: white; font-size: 12px; }
+
+    </style>
 </head>
 <body>
-<p class="p1"><span class="s1"><b>&lt;!doctype html&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;html lang="zh-Hant"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;head&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;meta charset="utf-8" /&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width,initial-scale=1" /&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;title&gt;Rachel Trip Mini App&lt;/title&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;style&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>body{font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",sans-serif; margin:0; background:#0b0b0f; color:#fff;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.wrap{max-width:820px; margin:0 auto; padding:20px;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.card{background:#151521; border:1px solid #2a2a3a; border-radius:16px; padding:16px; margin:12px 0;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>h1{font-size:22px; margin:8px 0 2px;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>h2{font-size:16px; margin:0 0 10px; opacity:.9;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.row{display:flex; gap:10px; flex-wrap:wrap;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>input, button{border-radius:12px; border:1px solid #2a2a3a; padding:10px 12px; background:#0f0f18; color:#fff;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>input{flex:1; min-width:220px;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>button{cursor:pointer;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>ul{list-style:none; padding:0; margin:0;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>li{display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid #232338;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>li:last-child{border-bottom:none;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.muted{opacity:.7; font-size:12px;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>.tag{font-size:12px; opacity:.85; padding:2px 8px; border:1px solid #2a2a3a; border-radius:999px;}</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/style&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;/head&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;body&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;div class="wrap"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;h1&gt;✈️ Rachel Trip Mini App&lt;/h1&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="muted"&gt;簡單行程＋打包清單（資料會存在你的瀏覽器）&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;h2&gt;📅 行程&lt;/h2&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="row"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;input id="planInput" placeholder="例：2/17 14:30 抵達 Socotra / 入住…" /&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;button onclick="addPlan()"&gt;新增&lt;/button&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;ul id="planList"&gt;&lt;/ul&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;h2&gt;🎒 打包清單&lt;/h2&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="row"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;input id="packInput" placeholder="例：隱形眼鏡、轉接頭、護唇膏…" /&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">        </span>&lt;button onclick="addPack()"&gt;新增&lt;/button&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;ul id="packList"&gt;&lt;/ul&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;div class="muted" style="margin-top:10px;"&gt;小技巧：打勾表示已打包&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;div class="card"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>&lt;span class="tag"&gt;下一步：把這個檔案丟到 GitHub → Vercel 就會變網址&lt;/span&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>&lt;/div&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>&lt;/div&gt;</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b>&lt;script&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>const KEY = "rachel_trip_mini_app_v1";</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>function load() {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const data = JSON.parse(localStorage.getItem(KEY) || '{"plans":[],"packs":[]}');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>renderPlans(data.plans);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>renderPacks(data.packs);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>function save(plans, packs) {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>localStorage.setItem(KEY, JSON.stringify({plans, packs}));</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>function addPlan() {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const input = document.getElementById("planInput");</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const text = input.value.trim();</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>if (!text) return;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const data = JSON.parse(localStorage.getItem(KEY) || '{"plans":[],"packs":[]}');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>data.plans.unshift(text);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>save(data.plans, data.packs);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>input.value = "";</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>renderPlans(data.plans);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>function addPack() {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const input = document.getElementById("packInput");</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const text = input.value.trim();</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>if (!text) return;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const data = JSON.parse(localStorage.getItem(KEY) || '{"plans":[],"packs":[]}');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>data.packs.unshift({text, done:false});</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>save(data.plans, data.packs);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>input.value = "";</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>renderPacks(data.packs);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>function togglePack(i) {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const data = JSON.parse(localStorage.getItem(KEY) || '{"plans":[],"packs":[]}');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>data.packs[i].done = !data.packs[i].done;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>save(data.plans, data.packs);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>renderPacks(data.packs);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>function delPlan(i) {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const data = JSON.parse(localStorage.getItem(KEY) || '{"plans":[],"packs":[]}');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>data.plans.splice(i,1);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>save(data.plans, data.packs);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>renderPlans(data.plans);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>function delPack(i) {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const data = JSON.parse(localStorage.getItem(KEY) || '{"plans":[],"packs":[]}');</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>data.packs.splice(i,1);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>save(data.plans, data.packs);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>renderPacks(data.packs);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>function renderPlans(plans) {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const ul = document.getElementById("planList");</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>ul.innerHTML = "";</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>plans.forEach((p, i) =&gt; {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>const li = document.createElement("li");</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>li.innerHTML = `&lt;span&gt;${escapeHtml(p)}&lt;/span&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">                      </span>&lt;button onclick="delPlan(${i})"&gt;刪&lt;/button&gt;`;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>ul.appendChild(li);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>});</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>function renderPacks(packs) {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>const ul = document.getElementById("packList");</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>ul.innerHTML = "";</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>packs.forEach((p, i) =&gt; {</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>const li = document.createElement("li");</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>li.innerHTML = `&lt;label style="display:flex; gap:10px; align-items:center; flex:1;"&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">                        </span>&lt;input type="checkbox" ${p.done ? "checked":""} onchange="togglePack(${i})" /&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">                        </span>&lt;span style="${p.done ? "text-decoration:line-through; opacity:.7":""}"&gt;${escapeHtml(p.text)}&lt;/span&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">                      </span>&lt;/label&gt;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">                      </span>&lt;button onclick="delPack(${i})"&gt;刪&lt;/button&gt;`;</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">      </span>ul.appendChild(li);</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>});</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>function escapeHtml(s){</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">    </span>return s.replace(/[&amp;&lt;&gt;"']/g, m =&gt; ({'&amp;':'&amp;amp;','&lt;':'&amp;lt;','&gt;':'&amp;gt;','"':'&amp;quot;',"'":'&amp;#039;'}[m]));</b></span></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>}</b></span></p>
-<p class="p2"><span class="s1"><b></b></span><br></p>
-<p class="p1"><span class="s1"><b><span class="Apple-converted-space">  </span>load();</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;/script&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;/body&gt;</b></span></p>
-<p class="p1"><span class="s1"><b>&lt;/html&gt;</b></span></p>
+
+    <header>
+        <div>
+            <h1>花天Judy的冒險</h1>
+            <span class="subtitle">龍血映沙｜Travel Quick Guide</span>
+        </div>
+        <div style="font-size: 12px; font-weight: bold; padding: 6px 12px; background: #eee; border-radius: 20px;">
+            11 Days
+        </div>
+    </header>
+
+    <div id="tab-timeline" class="section active">
+        </div>
+
+    <div id="tab-info" class="section">
+        <h2 style="font-size: 18px; margin-bottom: 20px;">✈️ 航班資訊</h2>
+        <div class="card" style="padding: 20px;">
+            <div id="flight-list"></div>
+        </div>
+
+        <h2 style="font-size: 18px; margin: 30px 0 20px 0;">💰 記帳與預算</h2>
+        <div class="budget-box">
+            <div style="font-size: 12px; color: #888;">目前花費 (USD)</div>
+            <div class="budget-total">$0</div>
+            <div class="input-group">
+                <input type="text" id="expense-name" placeholder="項目 (e.g. 晚餐)">
+                <input type="number" id="expense-amount" placeholder="金額">
+                <button class="add-btn" onclick="addExpense()">+</button>
+            </div>
+            <ul class="expense-list" id="expense-list"></ul>
+        </div>
+
+        <h2 style="font-size: 18px; margin: 30px 0 20px 0;">🏨 住宿列表</h2>
+        <div class="card stay">
+            <div class="card-time">Jeddah</div>
+            <div class="card-title">Best Western Plus</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Best+Western+Plus+Jeddah" target="_blank" class="btn-map">📍 導航</a>
+        </div>
+        <div class="card stay">
+            <div class="card-time">Socotra</div>
+            <div class="card-title">Camping & Hotels</div>
+            <div class="card-desc">Erisel Beach, Fermhin Forest, Detwah Lagoon</div>
+        </div>
+        <div class="card stay">
+            <div class="card-time">Dubai</div>
+            <div class="card-title">Grande Signature Apartments</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Grande+Signature+Apartments+Dubai" target="_blank" class="btn-map">📍 導航</a>
+        </div>
+    </div>
+
+    <div id="tab-checklist" class="section">
+        <h2 style="font-size: 18px; margin-bottom: 20px;">🎒 打包清單</h2>
+        <div id="checklist-container"></div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('timeline', this)">
+            <span class="nav-icon">📅</span>
+            行程
+        </div>
+        <div class="nav-item" onclick="switchTab('info', this)">
+            <span class="nav-icon">✈️</span>
+            資訊
+        </div>
+        <div class="nav-item" onclick="switchTab('checklist', this)">
+            <span class="nav-icon">✅</span>
+            打包
+        </div>
+    </nav>
+
+    <script>
+        // --- DATA ---
+        const flights = [
+            { date: "2/15", route: "TPE → DXB", code: "EK367", time: "23:00 → 04:50" },
+            { date: "2/16", route: "DXB → JED", code: "XY502", time: "12:20 → 14:45" },
+            { date: "2/17", route: "JED → SCT", code: "IY525", time: "11:00 → 14:30" },
+            { date: "2/23", route: "SCT → JED", code: "IY526", time: "10:30 → 14:00" },
+            { date: "2/23", route: "JED → DXB", code: "XY505", time: "17:00 → 20:45" },
+            { date: "2/26", route: "DXB → TPE", code: "EK386", time: "08:45 → 20:40" }
+        ];
+
+        const itinerary = [
+            {
+                date: "2/15 Sun",
+                city: "Taipei",
+                location: "TPE Airport",
+                lat: 25.0797, lon: 121.2342,
+                items: [
+                    { type: "transport", time: "23:00", title: "EK367 起飛", desc: "前往杜拜 | 飛行時間約 9hr", nav: null }
+                ]
+            },
+            {
+                date: "2/16 Mon",
+                city: "Dubai / Jeddah",
+                location: "Jeddah",
+                lat: 21.4858, lon: 39.1925,
+                items: [
+                    { type: "transport", time: "04:50", title: "抵達杜拜 (轉機)", desc: "等待轉機前往吉達", nav: "DXB Airport" },
+                    { type: "transport", time: "14:45", title: "抵達吉達", desc: "入境沙烏地阿拉伯", nav: "King Abdulaziz International Airport" },
+                    { type: "stay", time: "Check-in", title: "Best Western Plus", desc: "放置行李", nav: "Best Western Plus Jeddah" },
+                    { type: "food", time: "Dinner", title: "Waterfront Dinner", desc: "<span class='tag guide'>必去</span>吉達濱海路 Corniche 散步", nav: "Jeddah Corniche" }
+                ]
+            },
+            {
+                date: "2/17 Tue",
+                city: "Socotra",
+                location: "Socotra",
+                lat: 12.4634, lon: 53.8237,
+                items: [
+                    { type: "transport", time: "14:30", title: "抵達索科特拉", desc: "與導遊會合，搭乘 4x4", nav: "Socotra Airport" },
+                    { type: "stay", time: "Evening", title: "Erisel Beach 露營", desc: "<span class='tag guide'>觀星</span> 第一晚海灘露營體驗", nav: "Erisel Beach Socotra" }
+                ]
+            },
+            {
+                date: "2/18 Wed",
+                city: "Socotra",
+                location: "Socotra",
+                lat: 12.4634, lon: 53.8237,
+                items: [
+                    { type: "activity", time: "Morning", title: "Arher 白沙丘", desc: "<span class='tag guide'>攝影熱點</span> 巨大白沙丘與日出，可滑沙", nav: "Arher Beach" },
+                    { type: "activity", time: "Afternoon", title: "Homhil 保護區", desc: "<span class='tag guide'>絕景</span> 天然無邊際泳池 (Infinity Pool)", nav: "Homhil Protected Area" }
+                ]
+            },
+            {
+                date: "2/19 Thu",
+                city: "Socotra",
+                location: "Socotra",
+                lat: 12.4634, lon: 53.8237,
+                items: [
+                    { type: "activity", time: "All Day", title: "Dixam 高原 & 峽谷", desc: "探訪白色峽谷 (Kaleesan) 與龍血樹", nav: "Dixam Plateau" },
+                    { type: "stay", time: "Night", title: "Fermhin Forest Camp", desc: "在世界最大的龍血樹森林露營", nav: "Fermhin Forest" }
+                ]
+            },
+            {
+                date: "2/20 Fri",
+                city: "Socotra",
+                location: "Socotra",
+                lat: 12.4634, lon: 53.8237,
+                items: [
+                    { type: "activity", time: "Morning", title: "龍血樹森林漫步", desc: "<span class='tag guide'>世界遺產</span> 索科特拉標誌性景觀", nav: "Dragon Blood Tree Forest" },
+                    { type: "activity", time: "Afternoon", title: "Bedouin 村落體驗", desc: "體驗當地貝都因文化", nav: null }
+                ]
+            },
+            {
+                date: "2/21 Sat",
+                city: "Socotra",
+                location: "Socotra",
+                lat: 12.4634, lon: 53.8237,
+                items: [
+                    { type: "activity", time: "Day", title: "Detwah Lagoon", desc: "<span class='tag guide'>必看</span> 絕美藍色潟湖與白色沙灘", nav: "Detwah Lagoon" },
+                    { type: "activity", time: "Sunset", title: "潟湖日落登山", desc: "爬上小山丘俯瞰全景", nav: null }
+                ]
+            },
+            {
+                date: "2/22 Sun",
+                city: "Socotra",
+                location: "Socotra",
+                lat: 12.4634, lon: 53.8237,
+                items: [
+                    { type: "activity", time: "Morning", title: "Shoab Beach 船遊", desc: "<span class='tag guide'>生態</span> 尋找海豚 (Spinner Dolphins)", nav: "Shoab Beach" },
+                    { type: "activity", time: "Afternoon", title: "Qalansiyah", desc: "島上第二大城鎮散策", nav: "Qalansiyah" }
+                ]
+            },
+            {
+                date: "2/23 Mon",
+                city: "Dubai",
+                location: "Dubai",
+                lat: 25.2048, lon: 55.2708,
+                items: [
+                    { type: "transport", time: "20:45", title: "抵達杜拜", desc: "接機並前往市區", nav: "DXB Airport" },
+                    { type: "stay", time: "Check-in", title: "Grande Signature", desc: "Downtown Dubai", nav: "Grande Signature Apartments" }
+                ]
+            },
+            {
+                date: "2/24 Tue",
+                city: "UAE",
+                location: "Abu Dhabi",
+                lat: 24.4539, lon: 54.3773,
+                items: [
+                    { type: "activity", time: "Morning", title: "Sheikh Zayed Grand Mosque", desc: "<span class='tag guide'>服儀注意</span> 全白大理石清真寺", nav: "Sheikh Zayed Grand Mosque" },
+                    { type: "activity", time: "Afternoon", title: "Louvre Abu Dhabi", desc: "海上羅浮宮", nav: "Louvre Abu Dhabi" },
+                    { type: "food", time: "Dinner", title: "Time Out Market", desc: "杜拜美食市集，看水舞秀", nav: "Time Out Market Dubai" }
+                ]
+            },
+            {
+                date: "2/25 Wed",
+                city: "Dubai",
+                location: "Dubai",
+                lat: 25.2048, lon: 55.2708,
+                items: [
+                    { type: "activity", time: "Morning", title: "Old District 舊城區", desc: "黃金市集、香料市集、搭乘 Abra 船", nav: "Deira Old Souq" },
+                    { type: "activity", time: "Afternoon", title: "Burj Khalifa 124F", desc: "<span class='tag guide'>預約</span> 世界最高樓觀景台", nav: "Burj Khalifa" },
+                    { type: "activity", time: "Evening", title: "Desert Safari", desc: "沙漠衝沙與晚餐秀", nav: null }
+                ]
+            }
+        ];
+
+        const checklistData = {
+            "必備證件": ["護照", "簽證 (Visa)", "機票電子檔", "旅遊保險單", "美金現金 (新鈔)", "信用卡"],
+            "索科特拉 (戶外/露營)": ["頭燈 (Headlamp)", "快乾毛巾", "行動電源 x2", "濕紙巾 (大量)", "環保肥皂/洗髮精", "暈車藥", "防蚊液"],
+            "衣物裝備": ["泳衣/水母衣", "健行鞋/涼鞋", "薄外套 (沙漠溫差)", "長裙/長褲 (進清真寺用)", "太陽眼鏡", "遮陽帽"],
+            "攝影電子": ["相機 + 備用電池", "空拍機 (需許可)", "萬用轉接頭 (Type G)", "防水袋 (浮潛用)"]
+        };
+
+        // --- RENDER LOGIC ---
+
+        function init() {
+            renderTimeline();
+            renderFlights();
+            renderChecklist();
+        }
+
+        async function fetchWeather(lat, lon, elementId) {
+            try {
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+                const data = await res.json();
+                const temp = Math.round(data.current_weather.temperature);
+                const code = data.current_weather.weathercode;
+                let icon = "☀️";
+                if(code > 3) icon = "☁️"; 
+                if(code > 50) icon = "🌧️";
+                
+                document.getElementById(elementId).innerHTML = `${icon} ${temp}°C`;
+            } catch (e) {
+                document.getElementById(elementId).innerHTML = "🌤️ 25°C"; // Fallback
+            }
+        }
+
+        function renderTimeline() {
+            const container = document.getElementById('tab-timeline');
+            let html = '';
+            
+            itinerary.forEach((day, index) => {
+                const weatherId = `weather-${index}`;
+                // Trigger fetch
+                fetchWeather(day.lat, day.lon, weatherId);
+
+                let itemsHtml = day.items.map(item => `
+                    <div class="card ${item.type}">
+                        <div class="card-time">${item.time}</div>
+                        <div class="card-title">${item.title}</div>
+                        <div class="card-desc">${item.desc}</div>
+                        ${item.nav ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.nav)}" target="_blank" class="btn-map">📍 導航</a>` : ''}
+                    </div>
+                `).join('');
+
+                html += `
+                    <div class="day-header">
+                        <span>${day.date}</span>
+                        <div class="weather-badge" id="${weatherId}">Loading...</div>
+                    </div>
+                    ${itemsHtml}
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderFlights() {
+            const list = document.getElementById('flight-list');
+            list.innerHTML = flights.map(f => `
+                <div class="flight-row">
+                    <div style="font-weight:bold; color:var(--accent-ocean)">${f.date}</div>
+                    <div>${f.route}<br><span style="color:#999; font-size:11px">${f.code}</span></div>
+                    <div style="text-align:right">${f.time}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById('checklist-container');
+            let html = '';
+            for (const [category, items] of Object.entries(checklistData)) {
+                html += `<div class="checklist-category"><div class="category-title">${category}</div>`;
+                items.forEach(item => {
+                    html += `
+                        <div class="check-item" onclick="toggleCheck(this)">
+                            <div class="checkbox-circle"></div>
+                            <span>${item}</span>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function toggleCheck(el) {
+            el.classList.toggle('checked');
+        }
+
+        // Budget Logic
+        let total = 0;
+        function addExpense() {
+            const name = document.getElementById('expense-name').value;
+            const amount = parseFloat(document.getElementById('expense-amount').value);
+            if (name && amount) {
+                total += amount;
+                document.querySelector('.budget-total').textContent = `$${total}`;
+                const li = document.createElement('li');
+                li.className = 'expense-item';
+                li.innerHTML = `<span>${name}</span><span>$${amount}</span>`;
+                document.getElementById('expense-list').appendChild(li);
+                document.getElementById('expense-name').value = '';
+                document.getElementById('expense-amount').value = '';
+            }
+        }
+
+        // Tab Switcher
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        // Init
+        init();
+
+    </script>
 </body>
 </html>
