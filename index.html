@@ -2,68 +2,64 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Middle East Journey | Trip Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>花天Ｊudy | Travel Quick Guide</title>
     <style>
         :root {
             /* Palette: Japanese Minimalist x Desert Vibes */
-            --bg-color: #FDFBF7; /* 米白色背景 */
+            --bg-color: #FAFAF8;
             --card-bg: #FFFFFF;
             --text-main: #2C2C2C;
-            --text-sub: #8E8E93;
-            --accent-gold: #C5A065; /* 沙漠金 */
-            --accent-blue: #6B8E9B; /* 潟湖藍 */
-            --accent-green: #7F9172; /* 龍血樹綠 */
+            --text-sub: #8C8C8C;
+            --accent-sand: #C8AD7F;      /* 沙漠金 */
+            --accent-ocean: #5E8B7E;     /* 索科特拉藍綠 */
+            --accent-alert: #D9534F;
+            --nav-bg: rgba(255, 255, 255, 0.95);
             --border-radius: 12px;
             --shadow: 0 2px 10px rgba(0,0,0,0.04);
-            --nav-height: 70px;
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-main);
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: var(--text-main);
-            padding-bottom: calc(var(--nav-height) + 20px);
+            padding-bottom: 90px; /* Space for bottom nav */
+            line-height: 1.5;
         }
 
         /* HEADER */
         header {
+            padding: 40px 20px 10px 20px;
+            background: var(--bg-color);
             position: sticky;
             top: 0;
-            background: rgba(253, 251, 247, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 15px 20px;
-            z-index: 100;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            z-index: 10;
         }
-        h1 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: 0.05em; }
-        .date-badge { font-size: 12px; background: #eee; padding: 4px 8px; border-radius: 4px; color: #666; }
+        h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+        .subtitle { font-size: 13px; color: var(--text-sub); margin-top: 4px; display: block; }
 
-        /* TABS */
-        .section { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
+        /* SECTIONS & TABS */
+        .section { display: none; padding: 10px 20px; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CARDS (TIMELINE) */
-        .day-container { margin-bottom: 30px; }
+        /* TIMELINE CARDS */
+        .day-group { margin-bottom: 30px; }
         .day-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            position: sticky;
-            top: 60px;
-            z-index: 90;
+            align-items: baseline;
+            margin-bottom: 12px;
+            padding-left: 4px;
         }
         .day-date { font-size: 16px; font-weight: 700; color: var(--text-main); }
-        .day-weather { font-size: 12px; color: var(--text-sub); display: flex; align-items: center; gap: 5px; background: #fff; padding: 4px 10px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .day-weather { font-size: 12px; color: var(--text-sub); background: #EFEFEF; padding: 2px 8px; border-radius: 10px; }
 
         .card {
             background: var(--card-bg);
@@ -72,266 +68,288 @@
             margin-bottom: 12px;
             box-shadow: var(--shadow);
             position: relative;
-            border-left: 3px solid transparent;
+            border-left: 4px solid #ddd;
         }
 
-        .card.flight { border-left-color: var(--text-sub); }
-        .card.stay { border-left-color: var(--accent-gold); }
-        .card.activity { border-left-color: var(--accent-blue); }
-        .card.food { border-left-color: var(--accent-green); }
+        /* Card Categories */
+        .card.transport { border-left-color: #A0A0A0; }
+        .card.stay { border-left-color: var(--text-main); }
+        .card.food { border-left-color: var(--accent-alert); }
+        .card.activity { border-left-color: var(--accent-sand); }
+        .card.highlight { border-left-color: var(--accent-ocean); background: #F4F8F7; }
 
-        .card-meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: var(--text-sub); font-weight: 500; }
-        .card-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
-        .card-desc { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 12px; }
-        
-        /* Guide Highlights */
-        .highlight-box { background: #F7F9FA; padding: 8px 12px; border-radius: 8px; font-size: 12px; margin-top: 8px; border-left: 2px solid var(--accent-blue); }
-        .tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-right: 5px; }
-        .tag.tip { background: #FFF3E0; color: #EF6C00; }
-        .tag.eco { background: #E8F5E9; color: #2E7D32; }
-        .tag.must { background: #FFEBEE; color: #C62828; }
+        .time { font-size: 13px; color: var(--text-sub); font-weight: 600; font-family: monospace; display: block; margin-bottom: 4px; }
+        .card-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+        .card-desc { font-size: 14px; color: #555; margin-bottom: 10px; white-space: pre-line; }
 
+        /* Guide Tags */
+        .tag {
+            display: inline-block;
+            font-size: 10px;
+            padding: 3px 6px;
+            border-radius: 4px;
+            margin-right: 5px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .tag.guide { background: #E8F5E9; color: #2E7D32; border: 1px solid #C8E6C9; }
+        .tag.alert { background: #FFEBEE; color: #C62828; }
+        .tag.photo { background: #E3F2FD; color: #1565C0; }
+
+        /* Navigation Button */
         .btn-nav {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            background: #F2F2F7;
+            justify-content: center;
+            background: #F2F2F2;
             color: var(--text-main);
-            padding: 6px 12px;
-            border-radius: 20px;
             text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 8px;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             margin-top: 5px;
             transition: background 0.2s;
         }
-        .btn-nav:active { background: #E5E5EA; }
+        .btn-nav:active { background: #E0E0E0; }
 
         /* FLIGHTS TABLE */
-        .flight-card { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: var(--shadow); }
-        .flight-header { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-        .flight-route { font-weight: bold; font-size: 16px; }
-        .flight-date { color: var(--text-sub); font-size: 12px; }
-        .flight-detail-row { display: flex; justify-content: space-between; font-size: 13px; margin-top: 8px; }
-        .flight-time { font-weight: 600; color: var(--text-main); }
-        .flight-label { color: var(--text-sub); font-size: 11px; }
+        .flight-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+        }
+        .flight-route { font-weight: 700; font-size: 15px; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .flight-detail { display: flex; justify-content: space-between; color: #666; font-size: 13px; margin-top: 4px; }
+        .flight-code { color: var(--accent-ocean); font-weight: 600; font-family: monospace; }
 
         /* CHECKLIST */
         .check-group { margin-bottom: 25px; }
-        .check-title { font-size: 14px; font-weight: 600; color: var(--accent-gold); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .check-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--accent-sand); text-transform: uppercase; letter-spacing: 1px;}
         .check-item {
             display: flex;
             align-items: center;
-            padding: 12px;
-            background: #fff;
+            padding: 10px 0;
             border-bottom: 1px solid #f0f0f0;
             cursor: pointer;
-            transition: all 0.2s;
         }
-        .check-item:first-child { border-top-left-radius: 12px; border-top-right-radius: 12px; }
-        .check-item:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; border-bottom: none; }
-        
-        .checkbox { width: 20px; height: 20px; border: 2px solid #ddd; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .check-item.checked .checkbox { background: var(--accent-green); border-color: var(--accent-green); }
-        .check-item.checked .checkbox::after { content: '✓'; color: white; font-size: 12px; }
-        .check-item.checked span { text-decoration: line-through; color: #bbb; }
+        .check-box {
+            width: 20px; height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            margin-right: 12px;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .check-item.checked .check-box { background: var(--accent-ocean); border-color: var(--accent-ocean); }
+        .check-item.checked .check-box::after { content: '✓'; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; }
+        .check-item.checked span { text-decoration: line-through; color: #ccc; }
 
         /* BOTTOM NAV */
-        .nav-bar {
+        .bottom-nav {
             position: fixed;
             bottom: 0;
-            left: 0;
             width: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--nav-bg);
             backdrop-filter: blur(10px);
             border-top: 1px solid rgba(0,0,0,0.05);
             display: flex;
             justify-content: space-around;
-            height: var(--nav-height);
-            padding-bottom: 10px; /* Safe area */
-            z-index: 1000;
+            padding: 10px 0 20px 0; /* Extra padding for iPhone home bar */
+            z-index: 100;
         }
         .nav-item {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #ccc;
+            text-align: center;
+            color: #bbb;
             font-size: 10px;
+            flex: 1;
             cursor: pointer;
         }
-        .nav-item.active { color: var(--text-main); }
-        .nav-icon { font-size: 20px; margin-bottom: 4px; }
+        .nav-item.active { color: var(--text-main); font-weight: 600; }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 4px; }
 
     </style>
 </head>
 <body>
 
     <header>
-        <div>
-            <h1>Middle East Trip</h1>
-            <span style="font-size: 11px; color: #888;">Feb 15 - Feb 26, 2026</span>
-        </div>
-        <div class="date-badge">11 Days</div>
+        <h1>Middle East 2026</h1>
+        <span class="subtitle">11 Days Trip • Dubai & Socotra</span>
     </header>
 
     <div id="tab-timeline" class="section active">
-        </div>
+        <div id="timeline-container"></div>
+    </div>
 
     <div id="tab-info" class="section">
-        <h2 style="font-size:18px; margin-bottom:15px;">✈️ 航班資訊</h2>
-        <div id="flight-list"></div>
+        <h3 style="margin-bottom: 15px;">🛫 航班資訊 (Flights)</h3>
+        <div id="flights-container"></div>
+        
+        <h3 style="margin-top: 30px; margin-bottom: 15px;">🏨 住宿資訊 (Hotels)</h3>
+        <div id="hotels-container"></div>
 
-        <h2 style="font-size:18px; margin: 30px 0 15px 0;">🏨 住宿與地圖</h2>
-        <div id="stay-list"></div>
+        <h3 style="margin-top: 30px; margin-bottom: 15px;">🗺️ 地圖與導航</h3>
+        <div class="card">
+            <div class="card-desc">點擊下方按鈕開啟主要景點地圖列表</div>
+            <a href="https://www.google.com/maps/search/Dubai+Jeddah+Socotra" target="_blank" class="btn-nav" style="width:100%">🌍 開啟 Google Maps</a>
+        </div>
     </div>
 
     <div id="tab-checklist" class="section">
-        <h2 style="font-size:18px; margin-bottom:15px;">🎒 打包清單</h2>
+        <h3 style="margin-bottom: 15px;">🎒 打包清單</h3>
+        <div class="card" style="background:#FFF8E1; border-left:none;">
+            <div class="card-desc">⚠️ <b>索科特拉限重：</b><br>託運：23kg | 手提：7kg<br>登山小包：相機、水、毛巾</div>
+        </div>
         <div id="checklist-container"></div>
     </div>
 
-    <nav class="nav-bar">
+    <nav class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('timeline', this)">
-            <span class="nav-icon">📅</span>
-            行程
+            <span class="nav-icon">📅</span>行程
         </div>
         <div class="nav-item" onclick="switchTab('info', this)">
-            <span class="nav-icon">✈️</span>
-            資訊
+            <span class="nav-icon">🎫</span>資訊
         </div>
         <div class="nav-item" onclick="switchTab('checklist', this)">
-            <span class="nav-icon">✅</span>
-            打包
+            <span class="nav-icon">✅</span>清單
         </div>
     </nav>
 
     <script>
-        // --- DATA CONFIGURATION ---
+        // --- DATA ---
         
-        // Locations for Weather API (Lat, Lon)
-        const coords = {
-            "Taipei": {lat: 25.03, lon: 121.56},
-            "Dubai": {lat: 25.20, lon: 55.27},
-            "Jeddah": {lat: 21.48, lon: 39.19},
-            "Socotra": {lat: 12.65, lon: 54.02}, // Using Hadibo as proxy
-            "AbuDhabi": {lat: 24.45, lon: 54.37}
-        };
-
+        // Flight Data
         const flights = [
-            { date: "2/15 (日)", no: "EK367", route: "TPE → DXB", dep: "23:00", arr: "04:50 (+1)", term: "-" },
-            { date: "2/16 (一)", no: "XY502", route: "DXB → JED", dep: "12:20", arr: "14:45", term: "-" },
-            { date: "2/17 (二)", no: "IY525", route: "JED → SCT", dep: "11:00", arr: "14:30", term: "-" },
-            { date: "2/23 (一)", no: "IY526", route: "SCT → JED", dep: "10:30", arr: "14:00 (Est)", term: "-" },
-            { date: "2/23 (一)", no: "XY505", route: "JED → DXB", dep: "17:00", arr: "20:45", term: "-" },
-            { date: "2/26 (四)", no: "EK386", route: "DXB → TPE", dep: "08:45", arr: "20:40", term: "3" }
+            { date: "2/15", route: "TPE 台北 → DXB 杜拜", code: "EK367", time: "23:00 - 04:50 (+1)", term: "T3" },
+            { date: "2/16", route: "DXB 杜拜 → JED 吉達", code: "XY502", time: "12:20 - 14:45", term: "T1" },
+            { date: "2/17", route: "JED 吉達 → SCT 索科特拉", code: "IY525", time: "11:00 - 14:30", term: "-" },
+            { date: "2/23", route: "SCT 索科特拉 → JED 吉達", code: "IY526", time: "10:30 - 14:00", term: "-" },
+            { date: "2/23", route: "JED 吉達 → DXB 杜拜", code: "XY505", time: "17:00 - 20:45", term: "-" },
+            { date: "2/26", route: "DXB 杜拜 → TPE 台北", code: "EK386", time: "08:45 - 20:40", term: "T3" }
         ];
 
-        const stays = [
-            { name: "Best Western Plus Jeddah", addr: "Madinah Road, Jeddah", map: "Best Western Plus Jeddah Hotel Madinah Road" },
-            { name: "Socotra Campsites", addr: "Erisel / Fermhin / Detwah", map: "Socotra" },
-            { name: "Grande Signature Apartments", addr: "Downtown Dubai", map: "Grande Signature Apartments Dubai" }
+        // Hotel Data
+        const hotels = [
+            { name: "Best Western Plus Jeddah", address: "Madinah Road, Jeddah, Saudi Arabia", date: "2/16 Check-in" },
+            { name: "Socotra Camping", address: "Erisel / Fermhin / Detwah (Private Tent)", date: "2/17 - 2/22" },
+            { name: "Grande Signature Apartments", address: "Downtown Dubai", date: "2/23 Check-in" }
         ];
 
+        // Itinerary Data
+        // Types: transport, stay, food, activity, highlight
         const itinerary = [
             {
-                date: "2/15 (日)", title: "出發", location: "Taipei",
+                date: "2/15 (日)", city: "Taipei", lat: 25.03, lon: 121.56,
                 items: [
-                    { type: "flight", time: "23:00", title: "EK367 起飛", desc: "台北 TPE 前往杜拜 DXB。請提早 3 小時抵達機場。", nav: "Taoyuan International Airport" }
+                    { time: "23:00", title: "EK367 起飛", type: "transport", desc: "前往杜拜 | 飛行時間約 9hr 50m", nav: "Taoyuan International Airport" }
                 ]
             },
             {
-                date: "2/16 (一)", title: "轉機與抵達吉達", location: "Jeddah",
+                date: "2/16 (一)", city: "Jeddah", lat: 21.54, lon: 39.17,
                 items: [
-                    { type: "flight", time: "04:50", title: "抵達杜拜 (DXB)", desc: "轉機等待時間約 7.5 小時", nav: "Dubai International Airport" },
-                    { type: "flight", time: "12:20", title: "XY502 起飛", desc: "前往吉達 (JED)", nav: null },
-                    { type: "stay", time: "15:30", title: "Check-in Hotel", desc: "Best Western Plus Jeddah。放置行李稍作休息。", nav: "Best Western Plus Jeddah Hotel Madinah Road" },
-                    { type: "food", time: "19:00", title: "Waterfront Dinner", desc: "在吉達濱海路享受晚餐。", nav: "Jeddah Corniche" }
+                    { time: "04:50", title: "抵達杜拜 (DXB)", type: "transport", desc: "轉機等待 | 杜拜國際機場" },
+                    { time: "12:20", title: "XY502 飛往吉達", type: "transport", desc: "FlyNas 航空" },
+                    { time: "14:45", title: "抵達吉達 (JED)", type: "transport", desc: "入境沙烏地阿拉伯", nav: "King Abdulaziz International Airport" },
+                    { time: "16:00", title: "Check-in 飯店", type: "stay", desc: "Best Western Plus Jeddah Hotel", nav: "Best Western Plus Jeddah Hotel Madinah Road" },
+                    { time: "19:00", title: "Waterfront Dinner", type: "food", desc: "吉達濱海路散步與晚餐", nav: "Jeddah Corniche" }
                 ]
             },
             {
-                date: "2/17 (二)", title: "前往索科特拉", location: "Socotra",
+                date: "2/17 (二)", city: "Socotra", lat: 12.46, lon: 53.82,
                 items: [
-                    { type: "flight", time: "11:00", title: "IY525 起飛", desc: "前往神秘島嶼索科特拉 (SCT)", nav: "King Abdulaziz International Airport" },
-                    { type: "stay", time: "15:00", title: "Erisel Beach 露營", desc: "抵達後搭乘 4x4 前往島嶼東部。途經首府 Hadibo，遠眺 Hajhair 山脈。<br><span class='highlight-box'><span class='tag eco'>Eco</span>今晚在私人帳篷享受星空露營，備有便攜式廁所與淋浴。</span>", nav: "Erisel Beach" }
+                    { time: "11:00", title: "IY525 飛往索科特拉", type: "transport", desc: "Yemenia Airways" },
+                    { time: "14:30", title: "抵達索科特拉 (SCT)", type: "transport", desc: "導遊接機，轉乘 4x4", nav: "Socotra Airport" },
+                    { time: "Day", title: "Hadibo & Hajhair Mountains", type: "activity", desc: "途經首都 Hadibo，遠眺 Hajhair 山脈" },
+                    { time: "Night", title: "Erisel 海灘露營", type: "stay", desc: "私人帳篷，海邊觀星", nav: "Arher Beach" }
                 ]
             },
             {
-                date: "2/18 (三)", title: "沙丘與無邊際泳池", location: "Socotra",
+                date: "2/18 (三)", city: "Socotra", lat: 12.46, lon: 53.82,
                 items: [
-                    { type: "activity", time: "05:30", title: "Arher 白沙丘日出", desc: "爬上巨大沙丘看日出，體驗滑沙樂趣。<br><span class='highlight-box'><span class='tag tip'>Tips</span>早餐時留意海面，有機會看到飛旋海豚！</span>", nav: "Arher Beach" },
-                    { type: "activity", time: "Morning", title: "Dihamri 海洋保護區", desc: "浮潛勝地，擁有豐富的魚類和珊瑚礁。包含午餐。", nav: "Dihamri Marine Protected Area" },
-                    { type: "activity", time: "Afternoon", title: "Homhil 無邊際泳池", desc: "途經瓶子樹與龍血樹山谷。徒步下行至天然無邊際泳池游泳，俯瞰北岸絕景。", nav: "Homhil Protected Area" }
+                    { time: "Sunrise", title: "Arher 白沙丘日出", type: "highlight", desc: "爬上沙丘看日出，可滑沙", nav: "Arher Beach" },
+                    { time: "Morning", title: "早餐與海豚", type: "food", desc: "海灘早餐，留意 Spinner Dolphins" },
+                    { time: "Day", title: "Dihamri 海洋保護區", type: "activity", desc: "浮潛熱點 (裝備已含)，珊瑚礁豐富", nav: "Dihamri Marine Protected Area" },
+                    { time: "Afternoon", title: "Homhil 天然無邊際泳池", type: "highlight", desc: "絕景！瓶子樹與龍血樹山谷", nav: "Homhil Protected Area" },
+                    { time: "Night", title: "Erisel 海灘露營", type: "stay", desc: "返回東岸露營" }
                 ]
             },
             {
-                date: "2/19 (四)", title: "白色峽谷與沙漠", location: "Socotra",
+                date: "2/19 (四)", city: "Socotra", lat: 12.46, lon: 53.82,
                 items: [
-                    { type: "activity", time: "Morning", title: "Kaleesan Canyon", desc: "被稱為「白色峽谷」。純白岩石與蔚藍河水。<br><span class='highlight-box'><span class='tag must'>必備</span>請準備泳衣，跳水體驗超棒！</span>", nav: "Wadi Kalisan" },
-                    { type: "activity", time: "Afternoon", title: "Zahek 沙漠 & 駱駝體驗", desc: "彷彿《一千零一夜》場景。接著前往 Digub Cave 洞穴俯瞰南岸。", nav: "Zahek Sand Dunes" },
-                    { type: "stay", time: "Night", title: "Fermhin Forest 露營", desc: "穿越 Dirhur 峽谷，在世界最大的龍血樹森林中露營。", nav: "Fermhin Forest" }
+                    { time: "Morning", title: "Kaleesan 白色峽谷", type: "activity", desc: "蔚藍色池水與白色岩石，適合游泳", nav: "Wadi Kalisan" },
+                    { time: "Afternoon", title: "Zahek 沙漠與駱駝", type: "activity", desc: "騎駱駝體驗，阿拉伯之夜氛圍", nav: "Zahek Dunes" },
+                    { time: "Spot", title: "Digub Cave", type: "activity", desc: "巨大洞穴，俯瞰南岸風景", nav: "Digub Cave" },
+                    { time: "Night", title: "Fermhin 森林露營", type: "stay", desc: "睡在世界最大龍血樹森林中", nav: "Fermhin Forest" }
                 ]
             },
             {
-                date: "2/20 (五)", title: "龍血樹與貝都因文化", location: "Socotra",
+                date: "2/20 (五)", city: "Socotra", lat: 12.46, lon: 53.82,
                 items: [
-                    { type: "activity", time: "Morning", title: "龍血樹森林探索", desc: "地球上龍血樹最密集的區域。觀察特有種植物與鳥類。", nav: "Dragon Blood Tree Forest" },
-                    { type: "activity", time: "Afternoon", title: "拜訪貝都因村落", desc: "體驗當地生活並參觀龍血樹苗圃。<br><span class='highlight-box'><span class='tag eco'>保育</span>這些樹生長極慢，保育工作至關重要。</span>", nav: null }
+                    { time: "Morning", title: "龍血樹森林探索", type: "highlight", desc: "世界上最大的龍血樹集中地，尋找特有種動植物", nav: "Dragon Blood Tree Forest" },
+                    { time: "Afternoon", title: "Bedouin 村落拜訪", type: "activity", desc: "體驗當地貝都因生活，參觀龍血樹苗圃" },
+                    { time: "Night", title: "Fermhin 森林露營", type: "stay", desc: "私人營地過夜" }
                 ]
             },
             {
-                date: "2/21 (六)", title: "藍色潟湖奇景", location: "Socotra",
+                date: "2/21 (六)", city: "Socotra", lat: 12.46, lon: 53.82,
                 items: [
-                    { type: "activity", time: "Day", title: "Detwah Lagoon", desc: "島上最著名的景點。白沙與藍水形成超現實對比。潮汐變化時有絕美倒影。", nav: "Detwah Lagoon" },
-                    { type: "activity", time: "Sunset", title: "登山看日落", desc: "尋找孤獨的瓶子樹，俯瞰整個潟湖。", nav: null }
+                    { time: "Morning", title: "森林日出", type: "activity", desc: "探索不同區域的森林景觀" },
+                    { time: "Day", title: "Detwah Lagoon", type: "highlight", desc: "藍色潟湖，白沙與藍水的強烈對比", nav: "Detwah Lagoon" },
+                    { time: "Sunset", title: "潟湖山頂日落", type: "activity", desc: "爬上山丘看全景與孤獨瓶子樹" },
+                    { time: "Night", title: "Detwah 潟湖露營", type: "stay", desc: "潟湖旁專屬營地" }
                 ]
             },
             {
-                date: "2/22 (日)", title: "黃金海灘與海豚", location: "Socotra",
+                date: "2/22 (日)", city: "Socotra", lat: 12.46, lon: 53.82,
                 items: [
-                    { type: "activity", time: "Morning", title: "Shoab Beach 船遊", desc: "乘船前往「黃金海灘」，沿途觀賞岩石結構與成群的飛旋海豚。", nav: "Shoab Beach" },
-                    { type: "activity", time: "Afternoon", title: "Qalansiyah 小鎮", desc: "輕鬆的海灘時光後，參觀島上第二大城鎮。", nav: "Qalansiyah" }
+                    { time: "Morning", title: "Shoab Beach 船遊", type: "activity", desc: "乘船前往黃金海灘，尋找海豚", nav: "Shoab Beach" },
+                    { time: "Relax", title: "海灘時光", type: "activity", desc: "游泳、放鬆" },
+                    { time: "Afternoon", title: "Qalansiyah 小鎮", type: "activity", desc: "參觀島上第二大城鎮", nav: "Qalansiyah" }
                 ]
             },
             {
-                date: "2/23 (一)", title: "告別索科特拉", location: "Dubai",
+                date: "2/23 (一)", city: "Dubai", lat: 25.20, lon: 55.27,
                 items: [
-                    { type: "activity", time: "Morning", title: "Lagoon 日出", desc: "最後一次日出，打包行李。途中經過二戰俄羅斯坦克遺跡拍照。", nav: "Detwah Lagoon" },
-                    { type: "flight", time: "10:30", title: "IY526 起飛", desc: "飛回吉達轉機", nav: "Socotra Airport" },
-                    { type: "stay", time: "20:45", title: "抵達杜拜", desc: "入住 Grande Signature Apartments (Downtown)", nav: "Grande Signature Apartments Dubai" }
+                    { time: "Morning", title: "告別索科特拉", type: "activity", desc: "途經二戰俄羅斯坦克遺跡拍照", nav: "Russian Tanks Socotra" },
+                    { time: "10:30", title: "IY526 飛往吉達", type: "transport", desc: "前往轉機" },
+                    { time: "17:00", title: "XY505 飛往杜拜", type: "transport", desc: "返回 UAE" },
+                    { time: "20:45", title: "抵達杜拜", type: "transport", desc: "接機前往市區" },
+                    { time: "Night", title: "入住 Grande Signature", type: "stay", desc: "Downtown Dubai", nav: "Grande Signature Apartments Dubai" }
                 ]
             },
             {
-                date: "2/24 (二)", title: "阿布達比一日遊", location: "AbuDhabi",
+                date: "2/24 (二)", city: "Abu Dhabi", lat: 24.45, lon: 54.37,
                 items: [
-                    { type: "activity", time: "Morning", title: "謝赫扎耶德大清真寺", desc: "世界最美清真寺之一。<br><span class='highlight-box'><span class='tag must'>注意</span>服裝需完全遮蓋手臂與腿部，女性需包頭巾。</span>", nav: "Sheikh Zayed Grand Mosque" },
-                    { type: "activity", time: "Noon", title: "阿布達比羅浮宮", desc: "欣賞光之雨穹頂建築。", nav: "Louvre Abu Dhabi" },
-                    { type: "activity", time: "15:00", title: "騎馬體驗", desc: "沙漠或海灘騎馬。", nav: "Abu Dhabi Horse Riding" },
-                    { type: "food", time: "Dinner", title: "Time Out Market", desc: "位於杜拜，晚餐後觀賞哈里發塔水舞秀。", nav: "Time Out Market Dubai" }
+                    { time: "Morning", title: "謝赫扎耶德大清真寺", type: "highlight", desc: "服裝嚴格：長袖長褲包頭", nav: "Sheikh Zayed Grand Mosque" },
+                    { time: "Noon", title: "阿布達比羅浮宮", type: "activity", desc: "海上博物館，光之雨", nav: "Louvre Abu Dhabi" },
+                    { time: "Afternoon", title: "騎馬體驗", type: "activity", desc: "沙漠或海灘騎馬" },
+                    { time: "Dinner", title: "Time Out Market", type: "food", desc: "欣賞哈里發塔水舞秀", nav: "Time Out Market Dubai" }
                 ]
             },
             {
-                date: "2/25 (三)", title: "杜拜城市探索", location: "Dubai",
+                date: "2/25 (三)", city: "Dubai", lat: 25.20, lon: 55.27,
                 items: [
-                    { type: "activity", time: "Morning", title: "舊城區散步", desc: "Al Fahidi 歷史街區、搭乘 Abra 船、黃金香料市集。", nav: "Al Fahidi Historical District" },
-                    { type: "activity", time: "Afternoon", title: "哈里發塔 124F", desc: "登上世界最高樓展望台。", nav: "Burj Khalifa" },
-                    { type: "activity", time: "Evening", title: "沙漠衝沙 + 晚餐秀", desc: "Desert Safari 體驗。", nav: null }
+                    { time: "Morning", title: "舊城區散步", type: "activity", desc: "黃金市集、香料市集、Abra船", nav: "Al Fahidi Historical Neighbourhood" },
+                    { time: "Afternoon", title: "哈里發塔 124F", type: "highlight", desc: "世界最高樓展望台", nav: "Burj Khalifa" },
+                    { time: "Evening", title: "Desert Safari", type: "activity", desc: "沙漠衝沙與晚餐秀", nav: null }
                 ]
             },
             {
-                date: "2/26 (四)", title: "返程", location: "Dubai",
+                date: "2/26 (四)", city: "Taipei", lat: 25.03, lon: 121.56,
                 items: [
-                    { type: "flight", time: "08:45", title: "EK386 起飛", desc: "再見杜拜，返回溫暖的家。", nav: "Dubai International Airport Terminal 3" }
+                    { time: "08:45", title: "EK386 起飛", type: "transport", desc: "帶著回憶返家" },
+                    { time: "20:40", title: "抵達台北", type: "transport", desc: "平安抵達" }
                 ]
             }
         ];
 
-        const packingList = {
-            "隨身行李 (7kg)": ["護照", "簽證影本", "機票行程單", "錢包 (美金新鈔)", "行動電源 (需隨身)", "相機/鏡頭", "個人藥品"],
-            "托運行李 (23kg)": ["盥洗用品 (索科特拉露營用)", "快乾毛巾", "防蚊液 (重要)", "高係數防曬乳", "暈車藥", "轉換插頭 (Type G UK)", "充電線材"],
-            "衣物裝備": ["泳衣/水母衣", "好走的健行鞋", "涼鞋/拖鞋", "薄外套 (沙漠日夜溫差大)", "太陽眼鏡", "遮陽帽", "長裙/長褲 (清真寺用)"],
-            "其他": ["頭燈 (Headlamp) - 露營必備", "濕紙巾 (大量)", "防水袋 (Dry bag)", "環保水瓶", "零食/能量棒"]
+        const checklistData = {
+            "必備證件": ["護照 (效期6個月+)", "葉門/沙烏地/杜拜 簽證", "電子機票", "旅遊保險單", "美金現金 (新鈔)"],
+            "索科特拉裝備": ["輕便登山包 (Daypack)", "頭燈 (Headlamp)", "行動電源 x2", "濕紙巾/衛生紙 (大量)", "環保洗髮沐浴乳", "快乾毛巾", "暈車藥"],
+            "衣物": ["泳衣/水母衣", "健行鞋/涼鞋", "薄外套 (沙漠溫差)", "長裙/長褲 (清真寺用)", "太陽眼鏡/遮陽帽"],
+            "電子": ["相機 + 備用電池", "萬用轉接頭 (Type G)", "防水袋", "下載離線地圖"]
         };
 
         // --- FUNCTIONS ---
@@ -339,62 +357,74 @@
         function init() {
             renderTimeline();
             renderFlights();
-            renderStays();
+            renderHotels();
             renderChecklist();
-            restoreChecklistState();
         }
 
-        // Weather Fetcher
-        async function fetchWeather(city, elementId) {
-            if (!coords[city]) return;
-            const { lat, lon } = coords[city];
+        // Weather API (Open-Meteo)
+        async function fetchWeather(lat, lon, elementId) {
             try {
+                // Fetching current weather for simplicity
                 const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
                 const data = await res.json();
                 const temp = Math.round(data.current_weather.temperature);
                 const code = data.current_weather.weathercode;
                 
-                // Simple Weather Icons
                 let icon = "☀️";
-                if (code > 3) icon = "☁️"; 
-                if (code > 45) icon = "🌫️";
-                if (code > 50) icon = "🌧️";
-                if (code > 80) icon = "⛈️";
-
+                if(code > 3) icon = "☁️";
+                if(code > 50) icon = "🌧️";
+                
                 document.getElementById(elementId).innerHTML = `${icon} ${temp}°C`;
             } catch (e) {
-                console.log("Weather fetch failed", e);
-                document.getElementById(elementId).innerText = "N/A";
+                document.getElementById(elementId).innerHTML = "🌤️";
             }
         }
 
-        // Timeline Renderer
+        // Auto-Generate Guide Tags based on text
+        function generateTags(text) {
+            let tags = "";
+            const keywords = {
+                "guide": ["必拍", "世界遺產", "絕景", "必去"],
+                "photo": ["日出", "日落", "合照", "selfie"],
+                "alert": ["服裝", "注意", "限重", "現金"]
+            };
+
+            // Simple "AI" simulation
+            if (text.includes("日出") || text.includes("Sunrise")) tags += `<span class="tag photo">📸 日出</span>`;
+            if (text.includes("世界遺產") || text.includes("龍血樹")) tags += `<span class="tag guide">🌿 必看</span>`;
+            if (text.includes("服裝") || text.includes("清真寺")) tags += `<span class="tag alert">⚠️ 服儀</span>`;
+            if (text.includes("浮潛") || text.includes("游泳")) tags += `<span class="tag photo">🤿 玩水</span>`;
+            
+            return tags;
+        }
+
         function renderTimeline() {
-            const container = document.getElementById('tab-timeline');
+            const container = document.getElementById('timeline-container');
             let html = '';
             
-            itinerary.forEach((day, index) => {
-                const weatherId = `w-${index}`;
-                // Trigger weather fetch async
-                fetchWeather(day.location, weatherId);
+            itinerary.forEach((day, idx) => {
+                const weatherId = `w-${idx}`;
+                fetchWeather(day.lat, day.lon, weatherId); // Trigger weather fetch
 
-                let itemsHtml = day.items.map(item => `
+                let itemsHtml = day.items.map(item => {
+                    const navBtn = item.nav ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.nav)}" target="_blank" class="btn-nav">📍 導航</a>` : '';
+                    const tags = generateTags(item.desc + item.title);
+                    
+                    return `
                     <div class="card ${item.type}">
-                        <div class="card-meta">
-                            <span>${item.time}</span>
-                            <span>${item.type.toUpperCase()}</span>
-                        </div>
+                        <span class="time">${item.time}</span>
                         <div class="card-title">${item.title}</div>
-                        <div class="card-desc">${item.desc}</div>
-                        ${item.nav ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.nav)}" target="_blank" class="btn-nav">📍 導航</a>` : ''}
+                        <div class="card-desc">${tags}${item.desc}</div>
+                        ${navBtn}
                     </div>
-                `).join('');
+                    `;
+                }).join('');
 
                 html += `
-                    <div class="day-container">
+                    <div class="day-group">
                         <div class="day-header">
-                            <div class="day-date">${day.date} ${day.title}</div>
-                            <div class="day-weather" id="${weatherId}"><span style="font-size:10px">Loading</span></div>
+                            <span class="day-date">${day.date}</span>
+                            <span class="day-weather" id="${weatherId}">Loading...</span>
                         </div>
                         ${itemsHtml}
                     </div>
@@ -403,103 +433,46 @@
             container.innerHTML = html;
         }
 
-        // Info Tab Renderers
         function renderFlights() {
-            const list = document.getElementById('flight-list');
-            list.innerHTML = flights.map(f => `
+            const container = document.getElementById('flights-container');
+            container.innerHTML = flights.map(f => `
                 <div class="flight-card">
-                    <div class="flight-header">
-                        <span class="flight-route">${f.route}</span>
-                        <span class="flight-date">${f.date}</span>
+                    <div class="flight-route">
+                        <span>${f.route}</span>
+                        <span class="flight-code">${f.code}</span>
                     </div>
-                    <div class="flight-detail-row">
-                        <div>
-                            <div class="flight-label">Flight No.</div>
-                            <div class="flight-time" style="color:var(--accent-blue)">${f.no}</div>
-                        </div>
-                        <div style="text-align:center">
-                            <div class="flight-label">Dep</div>
-                            <div class="flight-time">${f.dep}</div>
-                        </div>
-                        <div style="text-align:right">
-                            <div class="flight-label">Arr</div>
-                            <div class="flight-time">${f.arr}</div>
-                        </div>
-                        ${f.term !== '-' ? `<div style="text-align:right"><div class="flight-label">Term</div><div class="flight-time">${f.term}</div></div>` : ''}
+                    <div class="flight-detail">
+                        <span>🕒 ${f.time}</span>
+                        <span>Terminal: ${f.term}</span>
                     </div>
                 </div>
             `).join('');
         }
 
-        function renderStays() {
-            const list = document.getElementById('stay-list');
-            list.innerHTML = stays.map(s => `
+        function renderHotels() {
+            const container = document.getElementById('hotels-container');
+            container.innerHTML = hotels.map(h => `
                 <div class="card stay">
-                    <div class="card-title">${s.name}</div>
-                    <div class="card-desc">${s.addr}</div>
-                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.map)}" target="_blank" class="btn-nav">📍 查看地圖</a>
+                    <div class="card-title">${h.name}</div>
+                    <div class="card-desc" style="font-size:13px; color:#666;">
+                        📅 ${h.date}<br>
+                        📍 ${h.address}
+                    </div>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.name + " " + h.address)}" target="_blank" class="btn-nav">🏨 導航至飯店</a>
                 </div>
             `).join('');
         }
 
-        // Checklist Logic
         function renderChecklist() {
             const container = document.getElementById('checklist-container');
             let html = '';
-            for (const [category, items] of Object.entries(packingList)) {
-                html += `<div class="check-group"><div class="check-title">${category}</div>`;
-                items.forEach((item, i) => {
-                    const id = `chk-${category}-${i}`;
-                    html += `
-                        <div class="check-item" id="${id}" onclick="toggleCheck('${id}')">
-                            <div class="checkbox"></div>
-                            <span>${item}</span>
-                        </div>
-                    `;
-                });
-                html += `</div>`;
-            }
-            container.innerHTML = html;
-        }
-
-        function toggleCheck(id) {
-            const el = document.getElementById(id);
-            el.classList.toggle('checked');
-            saveChecklistState();
-        }
-
-        function saveChecklistState() {
-            const checkedIds = [];
-            document.querySelectorAll('.check-item.checked').forEach(el => {
-                checkedIds.push(el.id);
-            });
-            localStorage.setItem('tripChecklist', JSON.stringify(checkedIds));
-        }
-
-        function restoreChecklistState() {
-            const saved = JSON.parse(localStorage.getItem('tripChecklist'));
-            if (saved) {
-                saved.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.classList.add('checked');
-                });
-            }
-        }
-
-        // Tab Switching
-        function switchTab(tabId, navEl) {
-            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-            document.getElementById(`tab-${tabId}`).classList.add('active');
             
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            navEl.classList.add('active');
+            // Load saved state
+            const savedState = JSON.parse(localStorage.getItem('tripChecklist')) || {};
 
-            window.scrollTo(0,0);
-        }
-
-        // Run
-        init();
-
-    </script>
-</body>
-</html>
+            for (const [category, items] of Object.entries(checklistData)) {
+                html += `<div class="check-group"><div class="check-title">${category}</div>`;
+                items.forEach(item => {
+                    const isChecked = savedState[item] ? 'checked' : '';
+                    html += `
+                        <div class="check-item ${
