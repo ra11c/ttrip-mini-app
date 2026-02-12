@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>花天Judy ｜Quick Travel Guide</title>
+    <title>花天Judy ｜Travel Guide</title>
     <style>
         :root {
             /* 配色：日式極簡 x 沙漠風情 */
-            --bg-color: #F8F8F6; /* 生成色 */
+            --bg-color: #F8F8F6;
             --card-bg: #FFFFFF;
-            --text-main: #3E3E3E; /* 墨灰 */
+            --text-main: #3E3E3E;
             --text-light: #949494;
-            --accent-sand: #C5A065; /* 沙漠金 */
-            --accent-pink: #D89F9F; /* 花天粉 */
-            --accent-blue: #7EA6B8; /* 索科特拉藍 */
+            --accent-sand: #C5A065;
+            --accent-pink: #D89F9F;
+            --accent-blue: #7EA6B8;
+            --accent-dark: #2C2C2C; /* 用於 Next Up 卡片 */
             --border-radius: 14px;
             --shadow: 0 4px 16px rgba(0,0,0,0.04);
             --nav-height: 80px;
@@ -35,27 +36,58 @@
         /* HEADER */
         header {
             padding: 40px 24px 15px 24px;
-            background: rgba(248, 248, 246, 0.95);
+            background: var(--bg-color);
             position: sticky;
             top: 0;
             z-index: 50;
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid rgba(0,0,0,0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
-        h1 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: 1px; color: var(--text-main); }
-        .subtitle { font-size: 11px; color: var(--accent-sand); letter-spacing: 2px; text-transform: uppercase; margin-top: 4px; display: block; font-weight: 600; }
+        h1 { margin: 0; font-size: 20px; font-weight: 700; color: var(--text-main); }
+        .subtitle { font-size: 11px; color: var(--accent-sand); letter-spacing: 2px; text-transform: uppercase; font-weight: 600; }
+        
+        /* NEXT UP CARD (DASHBOARD) */
+        .hero-card {
+            background: var(--accent-dark);
+            color: #FFF;
+            margin: 0 20px 20px 20px;
+            padding: 20px;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(44, 44, 44, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: slideDown 0.5s ease;
+        }
+        .hero-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.7; margin-bottom: 5px; }
+        .hero-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+        .hero-time { font-size: 24px; font-weight: 300; font-family: monospace; color: var(--accent-sand); }
+        .hero-countdown { font-size: 12px; opacity: 0.8; margin-top: 5px; }
+        
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* PROGRESS BAR */
+        .progress-container {
+            position: sticky;
+            top: 0;
+            background: var(--bg-color);
+            padding: 10px 20px;
+            z-index: 40;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .progress-info { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-light); margin-bottom: 5px; }
+        .progress-bg { width: 100%; height: 8px; background: #E0E0E0; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--accent-pink); width: 0%; transition: width 0.3s ease; border-radius: 4px; }
 
         /* SECTIONS */
-        .section { display: none; padding: 15px 20px; animation: fadeIn 0.3s ease; }
+        .section { display: none; padding: 10px 20px; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* TIMELINE CARDS */
+        /* TIMELINE */
         .date-header {
-            margin: 30px 0 12px 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin: 25px 0 10px 4px;
+            display: flex; justify-content: space-between; align-items: center;
         }
         .date-title { font-size: 17px; font-weight: 700; color: var(--text-main); }
         .weather-badge {
@@ -72,76 +104,39 @@
             box-shadow: var(--shadow);
             position: relative;
             border-left: 3px solid #DDD;
-            transition: transform 0.1s;
         }
-        .card:active { transform: scale(0.98); }
+        .card.transport { border-left-color: #A0A0A0; }
+        .card.stay { border-left-color: var(--accent-sand); }
+        .card.food { border-left-color: var(--accent-pink); }
+        .card.activity { border-left-color: var(--accent-blue); }
 
-        /* Card Colors by Type */
-        .card.transport { border-left-color: #A0A0A0; } /* 交通: 灰 */
-        .card.stay { border-left-color: var(--accent-sand); } /* 住宿: 金 */
-        .card.food { border-left-color: var(--accent-pink); } /* 食物: 粉 */
-        .card.activity { border-left-color: var(--accent-blue); } /* 景點: 藍 */
-
-        .card-time { font-size: 12px; color: var(--accent-sand); font-weight: 700; font-family: monospace; display: block; margin-bottom: 6px; text-transform: uppercase; }
-        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
-        .card-desc { font-size: 14px; color: #666; margin-bottom: 10px; white-space: pre-line; text-align: justify; }
+        .card-time { font-size: 12px; color: var(--accent-sand); font-weight: 700; font-family: monospace; display: block; margin-bottom: 6px; }
+        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .card-desc { font-size: 14px; color: #666; margin-bottom: 10px; white-space: pre-line; }
 
         /* MAP BUTTON */
         .btn-map {
-            display: inline-flex;
-            align-items: center;
-            background: #F2F2F2;
-            color: var(--text-main);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            text-decoration: none;
-            margin-top: 4px;
+            display: inline-flex; align-items: center;
+            background: #F2F2F2; color: var(--text-main);
+            padding: 6px 12px; border-radius: 8px;
+            font-size: 12px; font-weight: 600; text-decoration: none;
         }
-        .btn-map::before { content: '📍'; margin-right: 4px; font-size: 10px; }
 
-        /* SMART HIGHLIGHTS */
-        .hl-basic { background: #FFF4E5; color: #D35400; padding: 0 4px; border-radius: 4px; font-weight: 500; } /* Orange - Important */
-        .hl-photo { background: #E8F4F8; color: #2980B9; padding: 0 4px; border-radius: 4px; font-weight: 500; } /* Blue - Photo/Nature */
-        .hl-alert { background: #FDEBD0; color: #C0392B; padding: 0 4px; border-radius: 4px; font-weight: bold; } /* Red - Warning */
-
-        /* INFO & FLIGHTS */
-        .info-block { margin-bottom: 30px; }
-        .info-header { font-size: 13px; font-weight: 700; color: var(--text-light); margin-bottom: 10px; letter-spacing: 1px; border-left: 3px solid var(--accent-sand); padding-left: 8px; }
-        
-        .flight-row {
-            display: grid;
-            grid-template-columns: 0.6fr 1.8fr 0.8fr;
-            padding: 12px 0;
-            border-bottom: 1px solid #F0F0F0;
-            font-size: 14px;
-            align-items: center;
-        }
-        .flight-row:last-child { border-bottom: none; }
-        .f-date { font-weight: 700; color: var(--accent-blue); font-size: 12px; }
-        .f-route { font-weight: 600; color: var(--text-main); }
-        .f-detail { font-size: 11px; color: #888; display: block; margin-top: 2px; }
-        .f-time { text-align: right; font-family: monospace; font-size: 13px; font-weight: 600; }
+        /* HIGHLIGHTS */
+        .hl-basic { background: #FFF4E5; color: #D35400; padding: 0 4px; border-radius: 4px; }
+        .hl-photo { background: #E8F4F8; color: #2980B9; padding: 0 4px; border-radius: 4px; }
+        .hl-alert { background: #FDEBD0; color: #C0392B; padding: 0 4px; border-radius: 4px; font-weight: bold; }
 
         /* CHECKLIST */
         .check-group { margin-bottom: 25px; }
         .check-category { font-size: 14px; font-weight: 700; color: var(--accent-sand); margin-bottom: 10px; }
         .check-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #F4F4F4;
-            cursor: pointer;
-            transition: opacity 0.2s;
+            display: flex; align-items: center; padding: 12px 0;
+            border-bottom: 1px solid #F4F4F4; cursor: pointer;
         }
         .checkbox {
-            width: 20px; height: 20px;
-            border: 1.5px solid #CCC;
-            border-radius: 50%;
-            margin-right: 12px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
+            width: 20px; height: 20px; border: 1.5px solid #CCC; border-radius: 50%;
+            margin-right: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
         .check-item.checked .checkbox { background: var(--accent-pink); border-color: var(--accent-pink); }
         .check-item.checked .checkbox::after { content: '✓'; color: white; font-size: 12px; }
@@ -149,72 +144,71 @@
 
         /* BOTTOM NAV */
         .bottom-nav {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
+            position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(255, 255, 255, 0.96);
-            border-top: 1px solid #EEE;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0 25px 0; /* Extra safe area for iOS */
-            z-index: 100;
-            backdrop-filter: blur(10px);
+            border-top: 1px solid #EEE; display: flex; justify-content: space-around;
+            padding: 10px 0 25px 0; z-index: 100; backdrop-filter: blur(10px);
         }
-        .nav-item {
-            text-align: center;
-            font-size: 10px;
-            color: #C0C0C0;
-            flex: 1;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
+        .nav-item { text-align: center; font-size: 10px; color: #C0C0C0; flex: 1; cursor: pointer; }
         .nav-item.active { color: var(--text-main); font-weight: 600; }
         .nav-icon { font-size: 22px; display: block; margin-bottom: 4px; }
 
+        /* INFO TAB STYLES */
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>花天Judy</h1>
-        <span class="subtitle">Quick Travel Guide</span>
+        <div>
+            <h1>花天Judy</h1>
+            <span class="subtitle">Quick Travel Guide</span>
+        </div>
+        <div style="font-size: 12px; font-weight: bold; background: #EEE; padding: 4px 10px; border-radius: 20px;">11 Days</div>
     </header>
 
     <div id="tab-timeline" class="section active">
+        <div id="hero-card" class="hero-card">
+            <div class="hero-label">NEXT UP</div>
+            <div class="hero-title" id="next-title">旅程即將開始...</div>
+            <div class="hero-time" id="next-time">--:--</div>
+            <div class="hero-countdown" id="next-countdown">準備出發！</div>
+        </div>
+
         <div id="timeline-container"></div>
     </div>
 
     <div id="tab-info" class="section">
+        <h3 style="color:var(--text-light); font-size:14px; margin-bottom:10px;">FLIGHTS</h3>
+        <div class="card" id="flights-container"></div>
         
-        <div class="info-block">
-            <div class="info-header">FLIGHTS 航班資訊</div>
-            <div class="card">
-                <div id="flights-list"></div>
-            </div>
-        </div>
+        <h3 style="color:var(--text-light); font-size:14px; margin:20px 0 10px 0;">HOTELS</h3>
+        <div id="hotels-container"></div>
 
-        <div class="info-block">
-            <div class="info-header">HOTELS 住宿資訊</div>
-            <div id="hotels-list"></div>
+        <h3 style="color:var(--text-light); font-size:14px; margin:20px 0 10px 0;">MAP</h3>
+        <div class="card">
+            <div class="card-title">景點地圖</div>
+            <div class="card-desc">點擊下方按鈕開啟主要景點導航</div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Socotra+Island" target="_blank" class="btn-map" style="width:100%; justify-content:center;">開啟 Google Maps</a>
         </div>
-
-        <div class="info-block">
-            <div class="info-header">MAP 地圖</div>
-            <div class="card">
-                <div class="card-title">景點地圖</div>
-                <div class="card-desc">點擊下方按鈕開啟主要景點導航</div>
-                <a href="https://www.google.com/maps/search/?api=1&query=Socotra+Island" target="_blank" class="btn-map" style="width:100%; justify-content:center;">開啟 Google Maps</a>
-            </div>
-        </div>
-
     </div>
 
-    <div id="tab-checklist" class="section">
-        <div id="checklist-container"></div>
+    <div id="tab-checklist" class="section" style="padding-top:0;">
+        <div class="progress-container">
+            <div class="progress-info">
+                <span>打包進度</span>
+                <span id="progress-text">0%</span>
+            </div>
+            <div class="progress-bg">
+                <div class="progress-fill" id="progress-bar"></div>
+            </div>
+        </div>
+        <div id="checklist-container" style="margin-top: 20px;"></div>
     </div>
 
     <nav class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('timeline', this)">
-            <span class="nav-icon">📅</span>行程
+            <span class="nav-icon">🧭</span>行程
         </div>
         <div class="nav-item" onclick="switchTab('info', this)">
             <span class="nav-icon">🎫</span>資訊
@@ -225,167 +219,233 @@
     </nav>
 
     <script>
-        // --- DATA ---
-
-        const flights = [
-            {date: "2/15", code: "EK367", route: "TPE 台北 → DXB 杜拜", time: "23:00 - 04:50", term: "T3"},
-            {date: "2/16", code: "XY502", route: "DXB 杜拜 → JED 吉達", time: "12:20 - 14:45", term: "T1"},
-            {date: "2/17", code: "IY525", route: "JED 吉達 → SCT 索科特拉", time: "11:00 - 14:30", term: "-"},
-            {date: "2/23", code: "IY526", route: "SCT 索科特拉 → JED 吉達", time: "10:30 - 14:00", term: "-"},
-            {date: "2/23", code: "XY505", route: "JED 吉達 → DXB 杜拜", time: "17:00 - 20:45", term: "-"},
-            {date: "2/26", code: "EK386", route: "DXB 杜拜 → TPE 台北", time: "08:45 - 20:40", term: "T3"}
-        ];
-
-        const hotels = [
-            {name: "Best Western Plus Jeddah", addr: "Madinah Road, Jeddah", desc: "近濱海路 / 吉達"},
-            {name: "Socotra Campsites", addr: "Socotra Island", desc: "私人帳篷 (Erisel / Fermhin / Detwah)"},
-            {name: "Grande Signature Apartments", addr: "Downtown Dubai", desc: "杜拜市中心"}
-        ];
-
+        // --- 1. DATA CONFIG ---
+        const YEAR = 2026; // 指定年份
+        
         const itinerary = [
             {
-                date: "2/15 (日)", loc: "Taipei", lat: 25.07, lon: 121.23,
+                date: "2/15", displayDate: "2/15 (日)", loc: "Taipei", lat: 25.07, lon: 121.23,
                 items: [
                     {time: "23:00", title: "EK367 起飛", type: "transport", desc: "前往杜拜 | 飛行時間約 9hr 50m", nav: "Taoyuan Airport"}
                 ]
             },
             {
-                date: "2/16 (一)", loc: "Jeddah", lat: 21.54, lon: 39.17,
+                date: "2/16", displayDate: "2/16 (一)", loc: "Jeddah", lat: 21.54, lon: 39.17,
                 items: [
                     {time: "04:50", title: "抵達杜拜 (轉機)", type: "transport", desc: "等待轉機前往吉達"},
-                    {time: "12:20", title: "飛往吉達", type: "transport", desc: "XY502 | 抵達後入境沙烏地"},
-                    {time: "16:00", title: "Check-in 飯店", type: "stay", desc: "Best Western Plus Jeddah Hotel", nav: "Best Western Plus Jeddah Hotel Madinah Road"},
-                    {time: "Night", title: "Waterfront Dinner", type: "food", desc: "吉達濱海路散步與晚餐", nav: "Jeddah Corniche"}
+                    {time: "12:20", title: "飛往吉達 (XY502)", type: "transport", desc: "抵達後入境沙烏地"},
+                    {time: "16:00", title: "Check-in", type: "stay", desc: "Best Western Plus Jeddah Hotel", nav: "Best Western Plus Jeddah Hotel Madinah Road"},
+                    {time: "19:00", title: "Waterfront Dinner", type: "food", desc: "吉達濱海路散步與晚餐", nav: "Jeddah Corniche"}
                 ]
             },
             {
-                date: "2/17 (二)", loc: "Socotra", lat: 12.6, lon: 54.0,
+                date: "2/17", displayDate: "2/17 (二)", loc: "Socotra", lat: 12.6, lon: 54.0,
                 items: [
-                    {time: "11:00", title: "飛往索科特拉", type: "transport", desc: "IY525 (JED -> SCT)"},
-                    {time: "14:30", title: "Majestic White Dunes", type: "activity", desc: "抵達！前往東部。途經首都 Hadibo，遠眺 Hajhair 山脈。"},
-                    {time: "Night", title: "Erisel Beach 露營", type: "stay", desc: "第一晚海灘私人帳篷，享受星空。", nav: "Arher Beach"}
+                    {time: "11:00", title: "飛往索科特拉 (IY525)", type: "transport", desc: "JED -> SCT"},
+                    {time: "14:30", title: "Majestic White Dunes", type: "activity", desc: "抵達！前往東部。途經首都 Hadibo。"},
+                    {time: "19:00", title: "Erisel Beach 露營", type: "stay", desc: "第一晚海灘私人帳篷，享受星空。", nav: "Arher Beach"}
                 ]
             },
             {
-                date: "2/18 (三)", loc: "Socotra", lat: 12.6, lon: 54.0,
+                date: "2/18", displayDate: "2/18 (三)", loc: "Socotra", lat: 12.6, lon: 54.0,
                 items: [
-                    {time: "Sunrise", title: "Arher Sand Dunes", type: "activity", desc: "必看日出！爬上巨大沙丘、滑沙。早餐時留意海豚 (Spinner Dolphins)。", nav: "Arher Beach"},
-                    {time: "AM", title: "Dihamri 海洋保護區", type: "activity", desc: "浮潛熱點 (Snorkeling)，豐富珊瑚與魚群。享用午餐。", nav: "Dihamri Marine Protected Area"},
-                    {time: "PM", title: "Homhil 無邊際泳池", type: "activity", desc: "絕美天然泳池 (Infinity Pool)，眺望北岸。沿途可見瓶子樹與龍血樹。", nav: "Homhil Protected Area"},
-                    {time: "Night", title: "Erisel Beach 露營", type: "stay", desc: "返回東岸營地過夜。"}
+                    {time: "05:30", title: "Arher Sand Dunes 日出", type: "activity", desc: "必看日出！滑沙。留意海豚 (Spinner Dolphins)。", nav: "Arher Beach"},
+                    {time: "10:00", title: "Dihamri 海洋保護區", type: "activity", desc: "浮潛熱點 (Snorkeling)，豐富珊瑚與魚群。", nav: "Dihamri Marine Protected Area"},
+                    {time: "14:00", title: "Homhil 無邊際泳池", type: "activity", desc: "絕美天然泳池 (Infinity Pool)，眺望北岸。", nav: "Homhil Protected Area"},
+                    {time: "19:00", title: "Erisel Beach 露營", type: "stay", desc: "返回東岸營地過夜。"}
                 ]
             },
             {
-                date: "2/19 (四)", loc: "Socotra", lat: 12.5, lon: 53.9,
+                date: "2/19", displayDate: "2/19 (四)", loc: "Socotra", lat: 12.5, lon: 53.9,
                 items: [
-                    {time: "AM", title: "Kaleesan White Canyon", type: "activity", desc: "白色峽谷與蔚藍池水，適合游泳跳水。", nav: "Wadi Kalisan"},
-                    {time: "PM", title: "Zahek Desert & Camel", type: "activity", desc: "沙漠漫步與騎駱駝，體驗阿拉伯之夜氛圍。", nav: "Zahek Dunes"},
-                    {time: "Stop", title: "Digub Cave", type: "activity", desc: "巨大洞穴，俯瞰南岸美景。", nav: "Digub Cave"},
-                    {time: "Night", title: "Fermhin Forest Camp", type: "stay", desc: "前往 Dixam 高原，在世界最大龍血樹森林中露營。", nav: "Fermhin Forest"}
+                    {time: "09:00", title: "Kaleesan White Canyon", type: "activity", desc: "白色峽谷與蔚藍池水，適合游泳跳水。", nav: "Wadi Kalisan"},
+                    {time: "15:00", title: "Zahek Desert & Camel", type: "activity", desc: "沙漠漫步與騎駱駝，體驗阿拉伯之夜。", nav: "Zahek Dunes"},
+                    {time: "17:00", title: "Digub Cave", type: "activity", desc: "巨大洞穴，俯瞰南岸美景。", nav: "Digub Cave"},
+                    {time: "19:00", title: "Fermhin Forest Camp", type: "stay", desc: "在世界最大龍血樹森林中露營。", nav: "Fermhin Forest"}
                 ]
             },
             {
-                date: "2/20 (五)", loc: "Socotra", lat: 12.5, lon: 53.9,
+                date: "2/20", displayDate: "2/20 (五)", loc: "Socotra", lat: 12.5, lon: 53.9,
                 items: [
-                    {time: "AM", title: "龍血樹森林日出", type: "activity", desc: "探索特有種動植物，享受魔幻時刻。"},
-                    {time: "PM", title: "拜訪 Bedouin 村落", type: "activity", desc: "體驗當地生活，參觀龍血樹苗圃 (保育區)。"},
-                    {time: "Night", title: "Fermhin Forest Camp", type: "stay", desc: "繼續在龍血樹森林中露營。"}
+                    {time: "06:00", title: "龍血樹森林日出", type: "activity", desc: "探索特有種動植物，享受魔幻時刻。"},
+                    {time: "14:00", title: "Bedouin 村落拜訪", type: "activity", desc: "體驗當地生活，參觀龍血樹苗圃。"},
+                    {time: "19:00", title: "Fermhin Forest Camp", type: "stay", desc: "繼續在龍血樹森林中露營。"}
                 ]
             },
             {
-                date: "2/21 (六)", loc: "Socotra", lat: 12.6, lon: 53.5,
+                date: "2/21", displayDate: "2/21 (六)", loc: "Socotra", lat: 12.6, lon: 53.5,
                 items: [
-                    {time: "Day", title: "Detwah Lagoon", type: "activity", desc: "必訪藍色潟湖！白沙與藍水的極致對比。", nav: "Detwah Lagoon"},
-                    {time: "Sunset", title: "潟湖山頂日落", type: "activity", desc: "爬上山丘尋找孤獨瓶子樹，俯瞰全景。"},
-                    {time: "Night", title: "Detwah Lagoon Camp", type: "stay", desc: "潟湖旁專屬營地。"}
+                    {time: "10:00", title: "Detwah Lagoon", type: "activity", desc: "必訪藍色潟湖！白沙與藍水。", nav: "Detwah Lagoon"},
+                    {time: "17:30", title: "潟湖山頂日落", type: "activity", desc: "爬上山丘尋找孤獨瓶子樹。"},
+                    {time: "19:00", title: "Detwah Lagoon Camp", type: "stay", desc: "潟湖旁專屬營地。"}
                 ]
             },
             {
-                date: "2/22 (日)", loc: "Socotra", lat: 12.6, lon: 53.5,
+                date: "2/22", displayDate: "2/22 (日)", loc: "Socotra", lat: 12.6, lon: 53.5,
                 items: [
-                    {time: "AM", title: "Shoab Golden Beach", type: "activity", desc: "搭船前往黃金海灘，尋找跳躍的海豚 (Spinner Dolphins)。", nav: "Shoab Beach"},
-                    {time: "Relax", title: "海灘時光", type: "activity", desc: "游泳、放鬆。下午參觀 Qalansiyah 小鎮。", nav: "Qalansiyah"},
-                    {time: "Night", title: "Detwah Lagoon Camp", type: "stay", desc: "最後一晚露營。"}
+                    {time: "09:00", title: "Shoab Golden Beach", type: "activity", desc: "搭船前往，尋找海豚 (Spinner Dolphins)。", nav: "Shoab Beach"},
+                    {time: "14:00", title: "Qalansiyah 小鎮", type: "activity", desc: "參觀島上第二大城鎮。", nav: "Qalansiyah"},
+                    {time: "19:00", title: "Detwah Lagoon Camp", type: "stay", desc: "最後一晚露營。"}
                 ]
             },
             {
-                date: "2/23 (一)", loc: "Dubai", lat: 25.2, lon: 55.27,
+                date: "2/23", displayDate: "2/23 (一)", loc: "Dubai", lat: 25.2, lon: 55.27,
                 items: [
-                    {time: "AM", title: "告別索科特拉", type: "activity", desc: "途經二戰俄羅斯坦克遺跡拍照。前往機場。", nav: "Russian Tanks Socotra"},
+                    {time: "08:00", title: "告別索科特拉", type: "activity", desc: "前往機場。"},
                     {time: "10:30", title: "SCT → JED → DXB", type: "transport", desc: "漫長的轉機行程"},
                     {time: "20:45", title: "抵達杜拜", type: "transport", desc: "接機前往市區"},
-                    {time: "Night", title: "Check-in", type: "stay", desc: "Grande Signature Apartments", nav: "Grande Signature Apartments Dubai"}
+                    {time: "22:00", title: "Check-in", type: "stay", desc: "Grande Signature Apartments", nav: "Grande Signature Apartments Dubai"}
                 ]
             },
             {
-                date: "2/24 (二)", loc: "Abu Dhabi", lat: 24.45, lon: 54.37,
+                date: "2/24", displayDate: "2/24 (二)", loc: "Abu Dhabi", lat: 24.45, lon: 54.37,
                 items: [
-                    {time: "AM", title: "大清真寺", type: "activity", desc: "Sheikh Zayed Grand Mosque。注意服裝！", nav: "Sheikh Zayed Grand Mosque"},
-                    {time: "Noon", title: "羅浮宮博物館", type: "activity", desc: "Louvre Abu Dhabi。", nav: "Louvre Abu Dhabi"},
-                    {time: "PM", title: "騎馬體驗", type: "activity", desc: "下午活動"},
-                    {time: "Dinner", title: "Time Out Market", type: "food", desc: "晚餐與哈里發塔水舞秀", nav: "Time Out Market Dubai"}
+                    {time: "09:00", title: "大清真寺", type: "activity", desc: "Sheikh Zayed Grand Mosque。注意服裝！", nav: "Sheikh Zayed Grand Mosque"},
+                    {time: "12:00", title: "羅浮宮博物館", type: "activity", desc: "Louvre Abu Dhabi。", nav: "Louvre Abu Dhabi"},
+                    {time: "18:00", title: "Time Out Market", type: "food", desc: "晚餐與哈里發塔水舞秀", nav: "Time Out Market Dubai"}
                 ]
             },
             {
-                date: "2/25 (三)", loc: "Dubai", lat: 25.2, lon: 55.27,
+                date: "2/25", displayDate: "2/25 (三)", loc: "Dubai", lat: 25.2, lon: 55.27,
                 items: [
-                    {time: "Day", title: "杜拜城市體驗", type: "activity", desc: "舊城區散步、哈里發塔 124F 展望台。", nav: "Burj Khalifa"},
-                    {time: "PM", title: "沙漠晚餐", type: "food", desc: "Desert Safari。連結：Noble Life", nav: null}
+                    {time: "10:00", title: "舊城區散步", type: "activity", desc: "黃金市集、香料市集。", nav: "Al Fahidi"},
+                    {time: "14:00", title: "哈里發塔 124F", type: "activity", desc: "世界最高樓展望台。", nav: "Burj Khalifa"},
+                    {time: "17:00", title: "沙漠晚餐 Safari", type: "food", desc: "Desert Safari。", nav: null}
                 ]
             },
             {
-                date: "2/26 (四)", loc: "Taipei", lat: 25.0, lon: 121.5,
+                date: "2/26", displayDate: "2/26 (四)", loc: "Taipei", lat: 25.0, lon: 121.5,
                 items: [
-                    {time: "08:45", title: "EK386 起飛", type: "transport", desc: "返回甜蜜的家"},
-                    {time: "20:40", title: "抵達台北", type: "transport", desc: "旅程結束"}
+                    {time: "08:45", title: "EK386 起飛", type: "transport", desc: "返回甜蜜的家"}
                 ]
             }
         ];
 
         const checklistData = {
-            "隨身包": ["手機", "護照", "Visa (紙本＋手機)", "機票 / 電子票", "Drone permit", "旅遊保險資料", "信用卡", "美金現金 (新鈔)", "小費 $150–250", "緊急備用 $600+", "行動電源", "充電線", "轉接頭 ⭐", "耳機", "頸枕 / 眼罩 / 耳塞", "護唇膏 ⭐", "保濕噴霧 / 面膜", "隱形眼鏡＋藥水 ⭐", "眼鏡", "記憶卡 ⭐", "筆"],
-            "衣物": ["上衣", "短褲", "長褲", "睡衣", "內衣褲", "泳衣", "女生長裙 / 長褲（進村落、清真寺）"],
-            "鞋子": ["健行鞋", "涼鞋 / 拖鞋"],
-            "防曬＆戶外": ["太陽眼鏡", "帽子 / 漁夫帽", "SPF50 防曬（珊瑚友善）", "曬後修復 / 蘆薈", "防曬外套 / UV 罩衫", "水母衣 / 長袖泳衣"],
-            "露營與生活": ["頭燈", "快乾毛巾", "濕紙巾", "乾洗手", "盥洗用品（洗髮精 / 沐浴乳 / 牙刷牙膏）", "保濕乳液", "小醫藥包", "水壺"],
-            "電子 / 攝影": ["行動電源 x2–3", "延長線", "相機", "相機電池", "Drone＋備電", "防水袋 / 防沙袋"],
-            "其他": ["防塵口罩 / Buff", "零食 / 能量棒", "空購物袋"]
+            "隨身包": ["手機", "護照", "Visa", "機票", "Drone permit", "保險資料", "信用卡", "美金現金", "行動電源", "充電線", "轉接頭", "耳機", "頸枕/眼罩"],
+            "衣物": ["上衣", "短褲", "長褲", "睡衣", "內衣褲", "泳衣", "長裙/長褲 (清真寺)"],
+            "鞋子": ["健行鞋", "涼鞋/拖鞋"],
+            "防曬 & 戶外": ["太陽眼鏡", "帽子", "防曬乳", "曬後修復", "防曬外套", "水母衣"],
+            "露營 & 生活": ["頭燈", "快乾毛巾", "濕紙巾", "乾洗手", "盥洗用品", "保濕乳液", "水壺"],
+            "電子": ["相機+電池", "Drone+備電", "防水袋"]
         };
 
-        // --- FUNCTIONS ---
+        const flights = [
+            {date: "2/15", code: "EK367", route: "TPE → DXB", time: "23:00", term: "T3"},
+            {date: "2/16", code: "XY502", route: "DXB → JED", time: "12:20", term: "T1"},
+            {date: "2/17", code: "IY525", route: "JED → SCT", time: "11:00", term: "-"},
+            {date: "2/23", code: "IY526", route: "SCT → JED", time: "10:30", term: "-"},
+            {date: "2/23", code: "XY505", route: "JED → DXB", time: "17:00", term: "-"},
+            {date: "2/26", code: "EK386", route: "DXB → TPE", time: "08:45", term: "T3"}
+        ];
 
-        function init() {
-            renderTimeline();
-            renderInfo();
-            renderChecklist();
+        const hotels = [
+            {name: "Best Western Plus Jeddah", addr: "Madinah Road"},
+            {name: "Socotra Campsites", addr: "Private Tents"},
+            {name: "Grande Signature Apartments", addr: "Dubai Downtown"}
+        ];
+
+        // --- 2. LOGIC: NEXT UP (DASHBOARD) ---
+        function updateNextUp() {
+            const now = new Date();
+            let nextEvent = null;
+            let minDiff = Infinity;
+
+            // 遍歷所有行程找出「最近的一個未來事件」
+            itinerary.forEach(day => {
+                day.items.forEach(item => {
+                    // 解析時間字串 (e.g. "2/15" + "23:00") -> Date Object
+                    // 注意：這裡直接使用手機時間做比對，適合旅行當下使用
+                    const dateStr = `${YEAR}/${day.date} ${item.time}`;
+                    const eventDate = new Date(dateStr);
+                    
+                    const diff = eventDate - now;
+
+                    // 找出第一個還沒發生 (diff > 0) 且最近的事件
+                    if (diff > 0 && diff < minDiff) {
+                        minDiff = diff;
+                        nextEvent = { ...item, eventDate: eventDate, dateDisplay: day.date };
+                    }
+                });
+            });
+
+            if (nextEvent) {
+                document.getElementById('next-title').innerText = nextEvent.title;
+                document.getElementById('next-time').innerText = nextEvent.time;
+                
+                // 倒數計時格式化
+                const hours = Math.floor(minDiff / (1000 * 60 * 60));
+                const mins = Math.floor((minDiff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                if (hours > 24) {
+                    const days = Math.floor(hours / 24);
+                    document.getElementById('next-countdown').innerText = `還有 ${days} 天 ${hours % 24} 小時`;
+                } else if (hours > 0) {
+                    document.getElementById('next-countdown').innerText = `還有 ${hours} 小時 ${mins} 分鐘`;
+                } else {
+                    document.getElementById('next-countdown').innerText = `即將開始！還有 ${mins} 分鐘`;
+                    document.getElementById('next-countdown').style.color = "#FFD700";
+                }
+            } else {
+                document.getElementById('next-title').innerText = "旅程已結束";
+                document.getElementById('next-time').innerText = "";
+                document.getElementById('next-countdown').innerText = "期待下一次冒險！";
+            }
         }
 
-        // 1. Weather API
+        // --- 3. LOGIC: OFFLINE WEATHER ---
         async function fetchWeather(lat, lon, elementId) {
+            const cacheKey = `weather_${lat}_${lon}`;
+            const cachedData = localStorage.getItem(cacheKey);
+
+            // 1. 如果有快取，先顯示快取 (離線優先)
+            if (cachedData) {
+                const data = JSON.parse(cachedData);
+                renderWeather(elementId, data.temp, data.code, true); // true indicates cached
+            }
+
+            // 2. 嘗試抓取新資料
             try {
                 const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
                 const data = await res.json();
                 const temp = Math.round(data.current_weather.temperature);
                 const code = data.current_weather.weathercode;
-                let icon = "☀️";
-                if(code > 3) icon = "☁️";
-                if(code > 60) icon = "🌧️";
-                document.getElementById(elementId).innerHTML = `${icon} ${temp}°C`;
-            } catch {
-                document.getElementById(elementId).innerHTML = "🌤️";
+
+                // 更新 UI
+                renderWeather(elementId, temp, code, false);
+
+                // 更新快取
+                localStorage.setItem(cacheKey, JSON.stringify({ temp, code, timestamp: new Date().getTime() }));
+            } catch (e) {
+                console.log("Offline mode: showing cached data if available");
+                if (!cachedData) {
+                    document.getElementById(elementId).innerText = "No Net";
+                }
             }
         }
 
-        // 2. Smart Highlighter (導遊職責)
+        function renderWeather(elementId, temp, code, isCached) {
+            let icon = "☀️";
+            if (code > 3) icon = "☁️";
+            if (code > 50) icon = "🌧️";
+            
+            const el = document.getElementById(elementId);
+            el.innerHTML = `${icon} ${temp}°C`;
+            if(isCached) {
+                el.style.opacity = "0.6"; // 快取資料稍微淡一點
+            } else {
+                el.style.opacity = "1";
+            }
+        }
+
+        // --- 4. LOGIC: HIGHLIGHT & RENDER ---
         function highlightText(text) {
-            // 定義關鍵字規則
             const rules = [
                 { regex: /(必拍|必看|必訪|絕美|日出|海豚|Sunrise|Sunset)/g, class: "hl-photo" },
                 { regex: /(護照|Visa|現金|美金|轉接頭|Drone)/g, class: "hl-alert" },
                 { regex: /(注意|服裝|長褲|長裙)/g, class: "hl-alert" },
                 { regex: /(浮潛|游泳|Infinity Pool)/g, class: "hl-basic" }
             ];
-            
             let newText = text;
             rules.forEach(rule => {
                 newText = newText.replace(rule.regex, (match) => `<span class="${rule.class}">${match}</span>`);
@@ -393,122 +453,108 @@
             return newText;
         }
 
-        // 3. Render Timeline
         function renderTimeline() {
             const container = document.getElementById('timeline-container');
             let html = '';
-
             itinerary.forEach((day, idx) => {
                 const weatherId = `w-${idx}`;
-                // 非同步抓取天氣
                 fetchWeather(day.lat, day.lon, weatherId);
-
                 let itemsHtml = day.items.map(item => {
-                    const navBtn = item.nav 
-                        ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.nav)}" target="_blank" class="btn-map">導航</a>` 
-                        : '';
-                    
+                    const navBtn = item.nav ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.nav)}" target="_blank" class="btn-map">📍 導航</a>` : '';
                     return `
                         <div class="card ${item.type}">
                             <span class="card-time">${item.time}</span>
                             <div class="card-title">${item.title}</div>
                             <div class="card-desc">${highlightText(item.desc)}</div>
                             ${navBtn}
-                        </div>
-                    `;
+                        </div>`;
                 }).join('');
-
-                html += `
-                    <div>
-                        <div class="date-header">
-                            <span class="date-title">${day.date}</span>
-                            <span class="weather-badge" id="${weatherId}">Loading...</span>
-                        </div>
-                        ${itemsHtml}
-                    </div>
-                `;
+                html += `<div><div class="date-header"><span class="date-title">${day.displayDate}</span><span class="weather-badge" id="${weatherId}">...</span></div>${itemsHtml}</div>`;
             });
             container.innerHTML = html;
         }
 
-        // 4. Render Info (Flights & Hotels)
         function renderInfo() {
-            // Flights
-            const flightsHtml = flights.map(f => `
-                <div class="flight-row">
-                    <div class="f-date">${f.date}</div>
-                    <div>
-                        <div class="f-route">${f.route}</div>
-                        <span class="f-detail">${f.code} • Term: ${f.term}</span>
-                    </div>
-                    <div class="f-time">${f.time}</div>
-                </div>
-            `).join('');
-            document.getElementById('flights-list').innerHTML = flightsHtml;
-
-            // Hotels
-            const hotelsHtml = hotels.map(h => `
+            document.getElementById('flights-container').innerHTML = flights.map(f => `
+                <div class="info-row">
+                    <span style="font-weight:bold; color:var(--accent-blue)">${f.date}</span>
+                    <span>${f.route} <small>(${f.code})</small></span>
+                    <span style="font-family:monospace">${f.time}</span>
+                </div>`).join('');
+            
+            document.getElementById('hotels-container').innerHTML = hotels.map(h => `
                 <div class="card stay">
                     <div class="card-title">${h.name}</div>
-                    <div class="card-desc">${h.addr}<br><span style="color:#999; font-size:12px;">${h.desc}</span></div>
-                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.name + " " + h.addr)}" target="_blank" class="btn-map">導航</a>
-                </div>
-            `).join('');
-            document.getElementById('hotels-list').innerHTML = hotelsHtml;
+                    <div class="card-desc">${h.addr}</div>
+                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.name + " " + h.addr)}" target="_blank" class="btn-map">📍 導航</a>
+                </div>`).join('');
         }
 
-        // 5. Render Checklist
+        // --- 5. LOGIC: CHECKLIST PROGRESS ---
         function renderChecklist() {
             const container = document.getElementById('checklist-container');
             let html = '';
-            
-            // 讀取 LocalStorage (記憶功能)
             const savedState = JSON.parse(localStorage.getItem('judyTripChecklist')) || {};
+            
+            let totalItems = 0;
+            let checkedCount = 0;
 
             for (const [category, items] of Object.entries(checklistData)) {
                 html += `<div class="check-group"><div class="check-category">${category}</div>`;
                 items.forEach(item => {
-                    // 移除可能的方框符號 (雖然後端已處理，前端再保險一次)
-                    const cleanItem = item.replace(/☐/g, '').trim();
-                    const isChecked = savedState[cleanItem] ? 'checked' : '';
+                    totalItems++;
+                    const isChecked = savedState[item] ? 'checked' : '';
+                    if(isChecked) checkedCount++;
                     
                     html += `
-                        <div class="check-item ${isChecked}" onclick="toggleCheck(this, '${cleanItem}')">
+                        <div class="check-item ${isChecked}" onclick="toggleCheck(this, '${item}')">
                             <div class="checkbox"></div>
-                            <span>${highlightText(cleanItem)}</span>
-                        </div>
-                    `;
+                            <span>${highlightText(item)}</span>
+                        </div>`;
                 });
                 html += `</div>`;
             }
             container.innerHTML = html;
+            updateProgress(checkedCount, totalItems);
         }
 
         function toggleCheck(el, item) {
             el.classList.toggle('checked');
             const savedState = JSON.parse(localStorage.getItem('judyTripChecklist')) || {};
-            
             if (el.classList.contains('checked')) {
                 savedState[item] = true;
             } else {
                 delete savedState[item];
             }
-            // 存入 LocalStorage
             localStorage.setItem('judyTripChecklist', JSON.stringify(savedState));
+            
+            // Recalculate Progress
+            const total = document.querySelectorAll('.check-item').length;
+            const checked = document.querySelectorAll('.check-item.checked').length;
+            updateProgress(checked, total);
         }
 
-        // Tab Switcher
+        function updateProgress(checked, total) {
+            const percent = Math.round((checked / total) * 100);
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+            document.getElementById('progress-text').innerText = `${checked} / ${total} (${percent}%)`;
+        }
+
         function switchTab(tabId, btn) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
-            
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             btn.classList.add('active');
             window.scrollTo(0,0);
         }
 
-        // Start
-        init();
+        // INIT
+        renderTimeline();
+        renderInfo();
+        renderChecklist();
+        updateNextUp();
+        setInterval(updateNextUp, 60000); // Update countdown every minute
+
     </script>
 </body>
 </html>
