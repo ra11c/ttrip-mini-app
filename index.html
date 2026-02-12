@@ -3,6 +3,515 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>花天Judy ｜Travel Guide</title>
+    <style>
+        :root {
+            /* 日式極簡配色: 雲母色背景, 墨色文字, 沙漠金點綴 */
+            --bg-color: #F7F7F5;
+            --card-bg: #FFFFFF;
+            --text-main: #333333;
+            --text-sub: #888888;
+            --accent-sand: #C5A065;
+            --accent-pink: #D89F9F;
+            --accent-blue: #7EA6B8;
+            --border-radius: 16px;
+            --shadow: 0 4px 24px rgba(0,0,0,0.06);
+            --font-stack: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", sans-serif;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-stack);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 110px; /* Space for bottom nav */
+        }
+
+        /* HEADER */
+        header {
+            padding: 40px 24px 15px 24px;
+            background: rgba(247, 247, 245, 0.95);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+        }
+        h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--text-main); letter-spacing: 0.5px; }
+        .subtitle { font-size: 11px; color: var(--accent-sand); letter-spacing: 2px; text-transform: uppercase; margin-top: 6px; font-weight: 600; }
+
+        /* HERO: UP NEXT */
+        .hero-section { padding: 10px 20px 25px 20px; }
+        .hero-card {
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFFDF5 100%);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(197, 160, 101, 0.15);
+            border-left: 5px solid var(--accent-sand);
+            position: relative;
+        }
+        .hero-label { font-size: 11px; font-weight: 800; color: var(--accent-sand); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .hero-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--text-main); }
+        .hero-time { font-size: 14px; color: var(--text-sub); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+        .countdown-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--text-main); color: #FFF;
+            padding: 6px 14px; border-radius: 30px;
+            font-size: 13px; font-weight: 600; letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        /* SECTIONS */
+        .section { display: none; padding: 0 20px; animation: fadeIn 0.4s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* TIMELINE */
+        .date-header {
+            margin: 30px 0 16px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .date-text { font-size: 18px; font-weight: 800; color: var(--text-main); }
+        
+        /* NEW WEATHER BADGE */
+        .weather-badge {
+            font-size: 12px; font-weight: 600;
+            background: #FFF; border: 1px solid #EAEAEA;
+            padding: 4px 10px; border-radius: 12px;
+            color: #555;
+            display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            border-left: 3px solid #E0E0E0;
+            position: relative;
+        }
+        .card.transport { border-left-color: #A0A0A0; }
+        .card.stay { border-left-color: var(--accent-sand); }
+        .card.food { border-left-color: var(--accent-pink); }
+        .card.activity { border-left-color: var(--accent-blue); }
+
+        .card-time { font-size: 12px; color: var(--accent-sand); font-weight: 700; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+        .card-desc { font-size: 14px; color: #666; margin-bottom: 12px; line-height: 1.6; white-space: pre-line; }
+
+        .btn-map {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: #F4F4F4; color: #444; padding: 8px 14px;
+            border-radius: 8px; font-size: 12px; font-weight: 600; text-decoration: none;
+        }
+
+        /* FLIGHTS */
+        .luggage-alert {
+            background: #FFF3E0; border: 1px solid #FFE0B2; color: #E65100;
+            padding: 16px; border-radius: 12px; font-size: 13px; font-weight: 500;
+            margin-bottom: 25px; line-height: 1.6;
+        }
+        .flight-card {
+            background: #FFF; border-radius: 16px; padding: 22px;
+            margin-bottom: 20px; box-shadow: var(--shadow);
+        }
+        .fc-head { display: flex; justify-content: space-between; margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid #F5F5F5; }
+        .fc-code { font-weight: 700; color: var(--accent-blue); }
+        .fc-date { color: #999; font-size: 13px; }
+        .fc-route { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .fc-city { font-size: 24px; font-weight: 800; color: var(--text-main); }
+        .fc-arrow { color: #DDD; font-size: 20px; }
+        .fc-times { display: flex; justify-content: space-between; font-family: monospace; font-size: 15px; color: #444; font-weight: 600; margin-bottom: 15px; }
+        .fc-meta { background: #FAFAFA; padding: 12px; border-radius: 8px; font-size: 12px; color: #666; display: flex; justify-content: space-between; }
+        .fc-link { display: block; text-align: center; margin-top: 18px; color: var(--accent-pink); font-size: 12px; text-decoration: none; font-weight: 700; }
+
+        /* CHECKLIST PROGRESS */
+        .progress-box {
+            background: #FFF; padding: 20px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 25px;
+        }
+        .progress-head { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; font-weight: 700; color: var(--text-main); }
+        .progress-track { background: #EEE; height: 10px; border-radius: 5px; overflow: hidden; }
+        .progress-fill { background: var(--accent-pink); height: 100%; width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .check-group { margin-bottom: 30px; }
+        .check-cat { font-size: 14px; font-weight: 800; color: var(--accent-sand); margin-bottom: 12px; letter-spacing: 0.5px; }
+        .check-item { display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #F5F5F5; cursor: pointer; }
+        .checkbox { width: 22px; height: 22px; border: 2px solid #DDD; border-radius: 50%; margin-right: 14px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .check-item.checked .checkbox { background: var(--accent-pink); border-color: var(--accent-pink); }
+        .check-item.checked .checkbox::after { content: '✓'; color: white; font-size: 12px; font-weight: bold; }
+        .check-item.checked span { text-decoration: line-through; color: #CCC; }
+
+        /* HIGHLIGHTS */
+        .hl-photo { background: #E3F2FD; color: #1565C0; padding: 0 6px; border-radius: 4px; font-weight: 600; }
+        .hl-alert { background: #FFF3E0; color: #E65100; padding: 0 6px; border-radius: 4px; font-weight: 600; }
+
+        /* NAV */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            display: flex; padding: 12px 0 30px 0; z-index: 100;
+        }
+        .nav-item { flex: 1; text-align: center; color: #BBB; cursor: pointer; transition: color 0.2s; }
+        .nav-item.active { color: var(--text-main); }
+        .nav-icon { font-size: 24px; display: block; margin-bottom: 4px; }
+        .nav-text { font-size: 10px; font-weight: 600; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>花天Judy</h1>
+        <span class="subtitle">Middle East 2026</span>
+    </header>
+
+    <div id="tab-timeline" class="section active">
+        <div class="hero-section">
+            <div class="hero-card" id="hero-card">
+                <div class="hero-label">UP NEXT</div>
+                <div class="hero-title">計算中...</div>
+            </div>
+        </div>
+
+        <div id="timeline-container"></div>
+    </div>
+
+    <div id="tab-info" class="section">
+        <div class="luggage-alert">
+            🧳 <b>行李限重 Reminder</b><br>
+            • 託運 Checked: <b>23kg</b><br>
+            • 手提 Hand: <b>7kg</b><br>
+            • 隨身小包: 健行用 (水/相機/毛巾)
+        </div>
+        <div id="flights-container"></div>
+        
+        <div class="card stay">
+            <div class="card-title">🏨 住宿清單</div>
+            <div class="card-desc">
+                <b>Jeddah:</b> Best Western Plus<br>
+                <b>Socotra:</b> Camping (Private Tent)<br>
+                <b>Dubai:</b> Grande Signature Apts
+            </div>
+        </div>
+        
+        <div class="card activity">
+            <div class="card-title">🗺️ Google Maps</div>
+            <a href="http://googleusercontent.com/maps.google.com/8" target="_blank" class="btn-map" style="width:100%; justify-content:center;">開啟行程地圖</a>
+        </div>
+    </div>
+
+    <div id="tab-checklist" class="section">
+        <div class="progress-box">
+            <div class="progress-head">
+                <span>打包進度</span>
+                <span id="progress-text">0%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-bar"></div>
+            </div>
+        </div>
+        <div id="checklist-container"></div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('timeline', this)">
+            <span class="nav-icon">📅</span>
+            <span class="nav-text">行程</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('info', this)">
+            <span class="nav-icon">✈️</span>
+            <span class="nav-text">航班</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('checklist', this)">
+            <span class="nav-icon">🎒</span>
+            <span class="nav-text">打包</span>
+        </div>
+    </nav>
+
+    <script>
+        // --- DATA ---
+
+        const flightData = [
+            { code: "EK367", date: "2/15", from: "TPE", to: "DXB", dep: "23:00", arr: "04:50", dur: "9h 50m", term: "T3", link: "https://live.flighty.app/a670880c" },
+            { code: "XY502", date: "2/16", from: "DXB", to: "JED", dep: "12:20", arr: "14:45", dur: "3h 25m", term: "T1", link: "https://live.flighty.app/5b0a7877" },
+            { code: "IY525", date: "2/17", from: "JED", to: "SCT", dep: "11:00", arr: "14:30", dur: "3h 30m", term: "-", link: "https://live.flighty.app/a7876470" },
+            { code: "IY526", date: "2/23", from: "SCT", to: "JED", dep: "10:30", arr: "14:00", dur: "3h 30m", term: "T1", link: "https://live.flighty.app/bff8399b" },
+            { code: "XY505", date: "2/23", from: "JED", to: "DXB", dep: "17:00", arr: "20:45", dur: "2h 45m", term: "T1", link: "https://live.flighty.app/d39029e5" },
+            { code: "EK386", date: "2/26", from: "DXB", to: "TPE", dep: "08:45", arr: "20:40", dur: "7h 55m", term: "T2", link: "https://live.flighty.app/c7c0ba09" }
+        ];
+
+        // 設定 2026年 2月 的歷史平均天氣數據 (Mock Data)
+        const itinerary = [
+            {
+                date: "2/15 (日)", weather: "🌧️ 16-19°C 💧60%", // 台北冬天
+                items: [
+                    { t: "2026-02-15T23:00", time: "23:00", title: "EK367 起飛", type: "transport", desc: "前往杜拜 | 飛行時間 9hr 50m", nav: "Taoyuan Airport" }
+                ]
+            },
+            {
+                date: "2/16 (一)", weather: "☀️ 20-29°C 💧0%", // 吉達/杜拜
+                items: [
+                    { t: "2026-02-16T04:50", time: "04:50", title: "抵達杜拜 (DXB)", type: "transport", desc: "轉機等待" },
+                    { t: "2026-02-16T12:20", time: "12:20", title: "飛往吉達 (XY502)", type: "transport", desc: "FlyNas" },
+                    { t: "2026-02-16T16:00", time: "Check-in", title: "Best Western Plus", type: "stay", desc: "Jeddah Hotel Madinah Road", nav: "Best Western Plus Jeddah" },
+                    { t: "2026-02-16T19:00", time: "Dinner", title: "Waterfront Dinner", type: "food", desc: "吉達濱海路散步", nav: "Jeddah Corniche" }
+                ]
+            },
+            {
+                date: "2/17 (二)", weather: "🌤️ 22-28°C 💧10%", // 索科特拉
+                items: [
+                    { t: "2026-02-17T11:00", time: "11:00", title: "飛往索科特拉", type: "transport", desc: "IY525" },
+                    { t: "2026-02-17T14:30", time: "14:30", title: "Majestic White Dunes", type: "activity", desc: "抵達，搭乘4x4。途經 Hadibo。" },
+                    { t: "2026-02-17T18:00", time: "Night", title: "Erisel Beach 露營", type: "stay", desc: "私人帳篷，享受星空。", nav: "Arher Beach" }
+                ]
+            },
+            {
+                date: "2/18 (三)", weather: "☀️ 23-29°C 💧0%",
+                items: [
+                    { t: "2026-02-18T05:30", time: "Sunrise", title: "Arher Sand Dunes", type: "activity", desc: "必看日出！滑沙、尋找海豚。", nav: "Arher Beach" },
+                    { t: "2026-02-18T10:00", time: "AM", title: "Dihamri 海洋保護區", type: "activity", desc: "浮潛熱點 (Snorkeling)，豐富珊瑚與魚群。", nav: "Dihamri Marine Protected Area" },
+                    { t: "2026-02-18T14:00", time: "PM", title: "Homhil 無邊際泳池", type: "activity", desc: "絕美天然泳池 (Infinity Pool)。", nav: "Homhil Protected Area" },
+                    { t: "2026-02-18T19:00", time: "Night", title: "Erisel Beach 露營", type: "stay", desc: "返回東岸露營。" }
+                ]
+            },
+            {
+                date: "2/19 (四)", weather: "🌤️ 21-27°C 💧20%", // 山區/峽谷
+                items: [
+                    { t: "2026-02-19T08:00", time: "AM", title: "Kaleesan White Canyon", type: "activity", desc: "白色峽谷游泳跳水。", nav: "Wadi Kalisan" },
+                    { t: "2026-02-19T14:00", time: "PM", title: "Zahek Desert & Camel", type: "activity", desc: "沙漠漫步與騎駱駝。", nav: "Zahek Dunes" },
+                    { t: "2026-02-19T16:00", time: "Stop", title: "Digub Cave", type: "activity", desc: "巨大洞穴。", nav: "Digub Cave" },
+                    { t: "2026-02-19T18:00", time: "Night", title: "Fermhin Forest Camp", type: "stay", desc: "世界最大龍血樹森林露營。", nav: "Fermhin Forest" }
+                ]
+            },
+            {
+                date: "2/20 (五)", weather: "☁️ 18-25°C 💧10%", // 高原較涼
+                items: [
+                    { t: "2026-02-20T06:00", time: "Sunrise", title: "龍血樹森林日出", type: "activity", desc: "探索特有種動植物。" },
+                    { t: "2026-02-20T14:00", time: "PM", title: "Bedouin 村落", type: "activity", desc: "參觀龍血樹苗圃。" },
+                    { t: "2026-02-20T18:00", time: "Night", title: "Fermhin Forest Camp", type: "stay", desc: "森林露營。" }
+                ]
+            },
+            {
+                date: "2/21 (六)", weather: "☀️ 23-30°C 💧0%",
+                items: [
+                    { t: "2026-02-21T09:00", time: "Day", title: "Detwah Lagoon", type: "activity", desc: "必訪藍色潟湖！白沙與藍水。", nav: "Detwah Lagoon" },
+                    { t: "2026-02-21T17:00", time: "Sunset", title: "潟湖山頂日落", type: "activity", desc: "尋找孤獨瓶子樹，俯瞰全景。" },
+                    { t: "2026-02-21T19:00", time: "Night", title: "Detwah Lagoon Camp", type: "stay", desc: "潟湖旁專屬營地。" }
+                ]
+            },
+            {
+                date: "2/22 (日)", weather: "☀️ 24-30°C 💧0%",
+                items: [
+                    { t: "2026-02-22T08:00", time: "AM", title: "Shoab Golden Beach", type: "activity", desc: "搭船前往黃金海灘，尋找海豚。", nav: "Shoab Beach" },
+                    { t: "2026-02-22T14:00", time: "PM", title: "Qalansiyah 小鎮", type: "activity", desc: "參觀城鎮與放鬆。", nav: "Qalansiyah" },
+                    { t: "2026-02-22T18:00", time: "Night", title: "Detwah Lagoon Camp", type: "stay", desc: "最後一晚。" }
+                ]
+            },
+            {
+                date: "2/23 (一)", weather: "☀️ 20-28°C 💧0%",
+                items: [
+                    { t: "2026-02-23T08:00", time: "AM", title: "告別索科特拉", type: "activity", desc: "俄羅斯坦克遺跡拍照。", nav: "Russian Tanks Socotra" },
+                    { t: "2026-02-23T10:30", time: "10:30", title: "SCT → JED", type: "transport", desc: "IY526" },
+                    { t: "2026-02-23T17:00", time: "17:00", title: "JED → DXB", type: "transport", desc: "XY505" },
+                    { t: "2026-02-23T21:00", time: "Check-in", title: "Grande Signature", type: "stay", desc: "Downtown Dubai", nav: "Grande Signature Apartments Dubai" }
+                ]
+            },
+            {
+                date: "2/24 (二)", weather: "☀️ 19-27°C 💧0%", // 阿布達比
+                items: [
+                    { t: "2026-02-24T09:00", time: "AM", title: "大清真寺", type: "activity", desc: "注意服裝！Sheikh Zayed Grand Mosque", nav: "Sheikh Zayed Grand Mosque" },
+                    { t: "2026-02-24T12:00", time: "Noon", title: "羅浮宮博物館", type: "activity", desc: "Louvre Abu Dhabi", nav: "Louvre Abu Dhabi" },
+                    { t: "2026-02-24T15:00", time: "PM", title: "騎馬體驗", type: "activity", desc: "下午活動" },
+                    { t: "2026-02-24T19:00", time: "Dinner", title: "Time Out Market", type: "food", desc: "晚餐與哈里發塔水舞秀", nav: "Time Out Market Dubai" }
+                ]
+            },
+            {
+                date: "2/25 (三)", weather: "☀️ 19-28°C 💧0%",
+                items: [
+                    { t: "2026-02-25T10:00", time: "Day", title: "杜拜城市體驗", type: "activity", desc: "舊城區散步、哈里發塔 124F", nav: "Burj Khalifa" },
+                    { t: "2026-02-25T17:00", time: "Dinner", title: "沙漠晚餐", type: "food", desc: "Desert Safari" }
+                ]
+            },
+            {
+                date: "2/26 (四)", weather: "🌧️ 16-20°C 💧50%",
+                items: [
+                    { t: "2026-02-26T08:45", time: "08:45", title: "EK386 起飛", type: "transport", desc: "返回台北" }
+                ]
+            }
+        ];
+
+        const checklistData = {
+            "隨身包": ["手機", "護照", "Visa (紙本+手機)", "機票 / 電子票", "Drone permit", "保險資料", "信用卡", "美金現金 (新鈔)", "小費", "行動電源", "充電線", "轉接頭 ⭐", "耳機", "頸枕/眼罩", "護唇膏", "隱形眼鏡+藥水", "眼鏡", "記憶卡", "筆"],
+            "衣物鞋履": ["上衣", "短褲", "長褲", "睡衣", "內衣褲", "泳衣", "長裙/長褲 (清真寺)", "健行鞋", "涼鞋/拖鞋"],
+            "防曬戶外": ["太陽眼鏡", "帽子", "SPF50防曬", "蘆薈", "UV罩衫", "水母衣", "頭燈", "快乾毛巾", "濕紙巾", "盥洗用品", "保濕乳液", "水壺"],
+            "電子其他": ["相機+電池", "Drone+備電", "防水袋", "防塵口罩/Buff", "零食", "空購物袋"]
+        };
+
+        // --- FUNCTIONS ---
+
+        function init() {
+            renderTimeline();
+            updateUpNext();
+            renderFlights();
+            renderChecklist();
+            setInterval(updateUpNext, 60000);
+        }
+
+        // 1. Up Next (智慧倒數)
+        function updateUpNext() {
+            const now = new Date();
+            // 測試用：解除下方註解可模擬旅程中的時間
+            // const now = new Date("2026-02-16T10:00:00"); 
+
+            let nextItem = null;
+            let minDiff = Infinity;
+
+            for (const day of itinerary) {
+                for (const item of day.items) {
+                    const itemTime = new Date(item.t);
+                    const diff = itemTime - now;
+                    if (diff > 0 && diff < minDiff) {
+                        minDiff = diff;
+                        nextItem = { ...item, diff: diff };
+                    }
+                }
+            }
+
+            const heroCard = document.getElementById('hero-card');
+            if (nextItem) {
+                const hours = Math.floor(nextItem.diff / (1000 * 60 * 60));
+                const mins = Math.floor((nextItem.diff % (1000 * 60 * 60)) / (1000 * 60));
+                let timeLeft = hours > 24 ? `${Math.floor(hours/24)} 天` : `${hours}時 ${mins}分`;
+
+                heroCard.innerHTML = `
+                    <div class="hero-label">UP NEXT 下一個行程</div>
+                    <div class="hero-title">${nextItem.title}</div>
+                    <div class="hero-time">
+                        <span>${nextItem.time}</span>
+                        <span>|</span>
+                        <span>${nextItem.desc.split('|')[0]}</span>
+                    </div>
+                    <div class="countdown-badge">⏳ 還有 ${timeLeft}</div>
+                `;
+            } else {
+                heroCard.innerHTML = `<div class="hero-title">旅程已結束 ✨</div>`;
+            }
+        }
+
+        // 2. Render Timeline (含天氣)
+        function renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = itinerary.map(day => `
+                <div class="date-header">
+                    <span class="date-text">${day.date}</span>
+                    <div class="weather-badge">${day.weather}</div>
+                </div>
+                ${day.items.map(item => `
+                    <div class="card ${item.type}">
+                        <span class="card-time">${item.time}</span>
+                        <div class="card-title">${item.title}</div>
+                        <div class="card-desc">${highlightText(item.desc)}</div>
+                        ${item.nav ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.nav)}" target="_blank" class="btn-map">📍 導航</a>` : ''}
+                    </div>
+                `).join('')}
+            `).join('');
+        }
+
+        // 3. Flights
+        function renderFlights() {
+            const container = document.getElementById('flights-container');
+            container.innerHTML = flightData.map(f => `
+                <div class="flight-card">
+                    <div class="fc-head">
+                        <span class="fc-code">${f.code}</span>
+                        <span class="fc-date">${f.date}</span>
+                    </div>
+                    <div class="fc-route">
+                        <span class="fc-city">${f.from}</span>
+                        <span class="fc-arrow">✈</span>
+                        <span class="fc-city">${f.to}</span>
+                    </div>
+                    <div class="fc-times">
+                        <span>↗ ${f.dep}</span>
+                        <span>↘ ${f.arr}</span>
+                    </div>
+                    <div class="fc-meta">
+                        <span>${f.dur}</span>
+                        <span>${f.term}</span>
+                    </div>
+                    <a href="${f.link}" target="_blank" class="fc-link">Flighty Updates ></a>
+                </div>
+            `).join('');
+        }
+
+        // 4. Checklist Progress
+        function updateProgress() {
+            const saved = JSON.parse(localStorage.getItem('judyChecklist')) || {};
+            let total = 0, checked = 0;
+            Object.values(checklistData).forEach(arr => {
+                total += arr.length;
+                arr.forEach(i => { if(saved[i]) checked++; });
+            });
+            const percent = total ? Math.round((checked/total)*100) : 0;
+            document.getElementById('progress-text').innerText = `${checked}/${total} (${percent}%)`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        function renderChecklist() {
+            const container = document.getElementById('checklist-container');
+            const saved = JSON.parse(localStorage.getItem('judyChecklist')) || {};
+            let html = '';
+            for (const [cat, items] of Object.entries(checklistData)) {
+                html += `<div class="check-group"><div class="check-cat">${cat}</div>`;
+                items.forEach(item => {
+                    const isChecked = saved[item] ? 'checked' : '';
+                    html += `<div class="check-item ${isChecked}" onclick="toggleCheck(this, '${item}')">
+                        <div class="checkbox"></div><span>${highlightText(item)}</span></div>`;
+                });
+                html += `</div>`;
+            }
+            container.innerHTML = html;
+            updateProgress();
+        }
+
+        function toggleCheck(el, item) {
+            el.classList.toggle('checked');
+            const saved = JSON.parse(localStorage.getItem('judyChecklist')) || {};
+            if(el.classList.contains('checked')) saved[item] = true;
+            else delete saved[item];
+            localStorage.setItem('judyChecklist', JSON.stringify(saved));
+            updateProgress();
+        }
+
+        function highlightText(text) {
+            return text.replace(/(必拍|必看|日出|海豚)/g, '<span class="hl-photo">$1</span>')
+                       .replace(/(護照|Visa|現金|注意|服裝)/g, '<span class="hl-alert">$1</span>');
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            btn.classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        init();
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>花天Judy ｜Quick Travel Guide</title>
     <style>
         :root {
